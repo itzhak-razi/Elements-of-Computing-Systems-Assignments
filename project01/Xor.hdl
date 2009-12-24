@@ -14,4 +14,7 @@ CHIP Xor {
 
     PARTS:
     // Implementation missing.
+    Nand(a=a, b=b, out=nand-out);
+    Or(a=a, b=b, out=or-out);
+    And(a=or-out, b=nand-out, out=out);
 }
