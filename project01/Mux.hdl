@@ -1,0 +1,22 @@
+// This file is part of the materials accompanying the book 
+// "The Elements of Computing Systems" by Nisan and Schocken, 
+// MIT Press. Book site: www.idc.ac.il/tecs
+// File name: projects/01/Mux.hdl
+
+/** 
+ * Multiplexor.  If sel=0 then out = a else out = b.
+ */
+
+CHIP Mux {
+
+    IN  a, b, sel;
+    OUT out;
+
+    PARTS:
+    // My implementation.  As of this comment I don't have a valid "Or" so 
+    // you need to move the non-working "Or" out to get this to work.
+    Not(in=sel, out=NotSel);
+    And(a=a, b=NotSel, out=AndA);
+    And(a=b, b=sel, out=AndB);
+    Or(a=AndA, b=AndB, out=out);
+}
