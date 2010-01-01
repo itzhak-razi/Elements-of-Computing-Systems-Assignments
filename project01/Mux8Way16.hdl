@@ -20,5 +20,64 @@ CHIP Mux8Way16 {
     OUT out[16];
 
     PARTS: 
-   // Implementation missing.
+   // Works
+   /* A more efficient way to do this would be to calculate all the 'Ands'
+    that will be used multiple times just once */
+   Not(in=sel[0], out=NotSel0);
+   Not(in=sel[1], out=NotSel1);
+   Not(in=sel[2], out=NotSel2);
+
+   //Sets 'a'
+   And(a=NotSel0, b=NotSel1, out=ASelTemp);
+   And(a=ASelTemp, b=NotSel2, out=ASel);
+   Expand16(in=ASel, out=ASel16);
+   And16(a=ASel16, b=a, out=AOut);
+    
+
+   And(a=NotSel2, b=NotSel1, out=BSelTemp);
+   And(a=BSelTemp, b=sel[0], out=BSel);
+   Expand16(in=BSel, out=BSel16);
+   And16(a=BSel16, b=b, out=BOut);
+   
+
+   And(a=NotSel0, b=sel[1], out=CSelTemp);
+   And(a=CSelTemp, b=NotSel2, out=CSel);
+   Expand16(in=CSel, out=CSel16);
+   And16(a=CSel16, b=c, out=COut);
+
+   And(a=NotSel2, b=sel[1], out=DSelTemp);
+   And(a=DSelTemp, b=sel[0], out=DSel);
+   Expand16(in=DSel, out=DSel16);
+   And16(a=DSel16, b=d, out=DOut);
+
+
+   And(a=sel[2], b=NotSel1, out=ESelTemp);
+   And(a=ESelTemp, b=NotSel0, out=ESel);
+   Expand16(in=ESel, out=ESel16);
+   And16(a=ESel16, b=e, out=EOut);
+
+
+   And(a=sel[2], b=sel[0], out=FSelTemp);
+   And(a=FSelTemp, b=NotSel1, out=FSel);
+   Expand16(in=FSel, out=FSel16);
+   And16(a=FSel16, b=f, out=FOut);
+
+   And(a=sel[2], b=sel[1], out=GSelTemp);
+   And(a=GSelTemp, b=NotSel0, out=GSel);
+   Expand16(in=GSel, out=GSel16);
+   And16(a=GSel16, b=g, out=GOut);
+
+
+   And(a=sel[2], b=sel[1], out=HSelTemp);
+   And(a=HSelTemp, b=sel[0], out=HSel);
+   Expand16(in=HSel, out=HSel16);
+   And16(a=HSel16, b=h, out=HOut);
+
+    Or16(a=AOut, b=BOut, out=OutTemp);
+    Or16(a=OutTemp, b=COut, out=OutTemp2);
+    Or16(a=OutTemp2, b=DOut, out=OutTemp3);
+    Or16(a=OutTemp3, b=EOut, out=OutTemp4);
+    Or16(a=OutTemp4, b=FOut, out=OutTemp5);
+    Or16(a=OutTemp5, b=GOut, out=OutTemp6);
+    Or16(a=OutTemp6, b=HOut, out=out);
 }
