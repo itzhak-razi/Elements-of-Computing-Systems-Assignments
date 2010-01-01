@@ -13,5 +13,11 @@ CHIP Mux16 {
     OUT out[16];
 
     PARTS:
-    
+    // Works
+    Not(in=sel, out=NotSel);
+    Expand16(in=NotSel, out=NotSel16);
+    Expand16(in=sel, out=Sel16);
+    And16(a=a, b=NotSel16, out=AOut);
+    And16(a=b, b=Sel16, out=BOut);
+    Or16(a=AOut, b=BOut, out=out);
 }
