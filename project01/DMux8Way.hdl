@@ -15,18 +15,49 @@ CHIP DMux8Way {
     OUT a, b, c, d, e, f, g, h;
 
     PARTS:
-    // Implementation missing.
+    // Works
     //Gets 'h'
     And(a=sel[0], b=sel[1], out=HSelTemp);
-    And(a=HSel1, b=sel[2], out=HSel);
+    And(a=HSelTemp, b=sel[2], out=HSel);
     And(a=HSel, b=in, out=h);
 
     Not(in=sel[0], out=NotSel0);
     Not(in=sel[1], out=NotSel1);
     Not(in=sel[2], out=NotSel2);
+    
+    //Gets 'a'
+    And(a=NotSel0, b=NotSel1, out=ASelTemp);
+    And(a=ASelTemp, b=NotSel2, out=ASel);
+    And(a=ASel, b=in, out=a);
+    
+    //Gets 'b' 
+    And(a=sel[0], b=NotSel1, out=BSelTemp);
+    And(a=BSelTemp, b=NotSel2, out=BSel);
+    And(a=BSel, b=in, out=b);
 
+    //Gets 'c'
+    And(a=sel[1], b=NotSel2, out=CSelTemp);
+    And(a=CSelTemp, b=NotSel0, out=CSel);
+    And(a=CSel, b=in, out=c);
 
+    //Gets 'd'
+    And(a=NotSel2, b=sel[1], out=DSelTemp);
+    And(a=DSelTemp, b=sel[0], out=DSel);
+    And(a=DSel, b=in, out=d);
 
+    //Gets 'e'
+    And(a=sel[2], b=NotSel1, out=ESelTemp);
+    And(a=ESelTemp, b=NotSel0, out=ESel);
+    And(a=ESel, b=in, out=e);
 
+    //Gets 'f'
+    And(a=sel[2], b=sel[0], out=FSelTemp);
+    And(a=FSelTemp, b=NotSel1, out=FSel);
+    And(a=FSel, b=in, out=f);
+
+    //Gets 'g'
+    And(a=sel[2], b=sel[1], out=GSelTemp);
+    And(a=GSelTemp, b=NotSel0, out=GSel);
+    And(a=GSel, b=in, out=g);
 }
 
