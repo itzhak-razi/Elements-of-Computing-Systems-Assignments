@@ -13,5 +13,5 @@ CHIP Mux16 {
     OUT out[16];
 
     PARTS:
-    // Implementation missing.
+    
 }

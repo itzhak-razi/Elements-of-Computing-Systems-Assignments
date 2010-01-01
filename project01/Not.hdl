@@ -13,6 +13,5 @@ CHIP Not {
     OUT out;
 
     PARTS:
-    // My Implementation 
     Nand(a=in,b=in, out=out);
 }

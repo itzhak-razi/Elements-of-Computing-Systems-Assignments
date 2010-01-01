@@ -15,6 +15,24 @@ CHIP DMux4Way {
     OUT a, b, c, d;
 
     PARTS:
-    // Implementation missing.
-}
+    //Works
+    //Gets 'a'
+    Not(in=sel[0], out=NotSel0);
+    Not(in=sel[1], out=NotSel1);
+    And(a=NotSel0, b=NotSel1, out=ASel);
+    And(a=ASel, b=in, out=a); 
 
+    //Gets 'd'
+    And(a=sel[0], b=sel[1], out=DSel);
+    And(a=DSel, b=in, out=d);
+
+    Xor(a=sel[0], b=sel[1], out=BOrC);
+
+    //Gets 'b'
+    And(a=BOrC, b=sel[0], out=BSel);
+    And(a=BSel, b=in, out=b);
+    
+    //Gets 'c'
+    And(a=BOrC, b=sel[1], out=CSel);
+    And(a=CSel, b=in, out=c);
+}

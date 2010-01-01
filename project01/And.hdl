@@ -13,7 +13,6 @@ CHIP And {
     OUT out;
 
     PARTS:
-    // My Implementation
     Nand(a=a, b=b, out=Nanda);
     Nand(a=a, b=b, out=Nandb);
     Nand(a=Nanda, b=Nandb, out=out);

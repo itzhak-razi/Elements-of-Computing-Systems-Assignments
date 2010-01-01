@@ -16,5 +16,17 @@ CHIP DMux8Way {
 
     PARTS:
     // Implementation missing.
+    //Gets 'h'
+    And(a=sel[0], b=sel[1], out=HSelTemp);
+    And(a=HSel1, b=sel[2], out=HSel);
+    And(a=HSel, b=in, out=h);
+
+    Not(in=sel[0], out=NotSel0);
+    Not(in=sel[1], out=NotSel1);
+    Not(in=sel[2], out=NotSel2);
+
+
+
+
 }
 
