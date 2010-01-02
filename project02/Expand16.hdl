@@ -1,0 +1,25 @@
+// Takes a 1 bit input and outputs it 16 times
+CHIP Expand16 {
+    IN in;
+    OUT out[16];
+    
+    PARTS:
+    Not(in=in, out=NotIn);
+    Not(in=NotIn, out=out[0]);
+    Not(in=NotIn, out=out[1]);
+    Not(in=NotIn, out=out[2]);
+    Not(in=NotIn, out=out[3]);
+    Not(in=NotIn, out=out[4]);
+    Not(in=NotIn, out=out[5]);
+    Not(in=NotIn, out=out[6]);
+    Not(in=NotIn, out=out[7]);
+    Not(in=NotIn, out=out[8]);
+    Not(in=NotIn, out=out[9]);
+    Not(in=NotIn, out=out[10]);
+    Not(in=NotIn, out=out[11]);
+    Not(in=NotIn, out=out[12]);
+    Not(in=NotIn, out=out[13]);
+    Not(in=NotIn, out=out[14]);
+    Not(in=NotIn, out=out[15]);
+
+}
