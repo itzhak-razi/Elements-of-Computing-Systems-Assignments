@@ -20,7 +20,7 @@ CHIP RAM8 {
     OUT out[16];
 
     PARTS:
-    // Works
+    // Implementation missing.
     //Should use Mux8Way16
 
     Mux8Way16(sel=address, a=registerA, b=registerB, c=registerC, d=registerD, 
