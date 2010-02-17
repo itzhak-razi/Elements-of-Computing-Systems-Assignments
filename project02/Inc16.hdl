@@ -14,10 +14,11 @@ CHIP Inc16 {
     OUT out[16];
 
     PARTS:
-    // Implementation missing.
+    // Works.  I basically copied how the ALU would increment as described in the book.
+    //It seems like there should be some way to just do Add16(a=in, b=1, out=out).  
+    Not16(in=in, out=inNegated);
     Not16(out=negOne);
-    Add16(a=negOne, b=in, out=inMinusOne);
+    Add16(a=negOne, b=inNegated, out=inMinusOne);
     Not16(in=inMinusOne, out=out);
-    //Add16(a=in, b=1, out=out);
 }
 
