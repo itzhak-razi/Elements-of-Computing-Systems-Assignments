@@ -20,6 +20,4 @@ CHIP PC {
     PARTS:
     // Implementation missing.
     ALU(x=in, y=in, zx=reset, zy=reset, f=reset, out=possiblyZeroOut); 
-    Register(in=in, load=load, out=out);
-    Inc
 }

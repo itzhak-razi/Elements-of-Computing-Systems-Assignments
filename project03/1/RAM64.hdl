@@ -20,6 +20,27 @@ CHIP RAM64 {
     OUT out[16];
 
     PARTS:
-    // Implementation missing.
+    // Works
+    DMux8Way(in=load, sel=address[0..2], 
+        a=ramALoad,
+        b=ramBLoad,
+        c=ramCLoad,
+        d=ramDLoad,
+        e=ramELoad,
+        f=ramFLoad,
+        g=ramGLoad,
+        h=ramHLoad);
+
+    RAM8(in=in, load=ramALoad, address=address[3..5], out=ramA);
+    RAM8(in=in, load=ramBLoad, address=address[3..5], out=ramB);
+    RAM8(in=in, load=ramCLoad, address=address[3..5], out=ramC);
+    RAM8(in=in, load=ramDLoad, address=address[3..5], out=ramD);
+    RAM8(in=in, load=ramELoad, address=address[3..5], out=ramE);
+    RAM8(in=in, load=ramFLoad, address=address[3..5], out=ramF);
+    RAM8(in=in, load=ramGLoad, address=address[3..5], out=ramG);
+    RAM8(in=in, load=ramHLoad, address=address[3..5], out=ramH);
+
+    Mux8Way16(sel=address[0..2], a=ramA, b=ramB, c=ramC, d=ramD, e=ramE, f=ramF, g=ramG, h=ramH, 
+            out=out);
 
 }
