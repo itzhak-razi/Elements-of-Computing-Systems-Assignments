@@ -21,4 +21,25 @@ CHIP RAM4K {
 
     PARTS:
     // Implementation missing.
+    DMux8Way(in=load, sel=address[0..2], 
+        a=ramALoad,
+        b=ramBLoad,
+        c=ramCLoad,
+        d=ramDLoad,
+        e=ramELoad,
+        f=ramFLoad,
+        g=ramGLoad,
+        h=ramHLoad);
+
+    RAM512(in=in, load=ramALoad, address=address[3..11], out=ramA);
+    RAM512(in=in, load=ramBLoad, address=address[3..11], out=ramB);
+    RAM512(in=in, load=ramCLoad, address=address[3..11], out=ramC);
+    RAM512(in=in, load=ramDLoad, address=address[3..11], out=ramD);
+    RAM512(in=in, load=ramELoad, address=address[3..11], out=ramE);
+    RAM512(in=in, load=ramFLoad, address=address[3..11], out=ramF);
+    RAM512(in=in, load=ramGLoad, address=address[3..11], out=ramG);
+    RAM512(in=in, load=ramHLoad, address=address[3..11], out=ramH);
+
+    Mux8Way16(sel=address[0..2], a=ramA, b=ramB, c=ramC, d=ramD, e=ramE, f=ramF, g=ramG, h=ramH, 
+            out=out);
 }
