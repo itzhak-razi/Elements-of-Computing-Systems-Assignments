@@ -33,10 +33,12 @@ CHIP PC {
 
     And(a=notLoad, b=notReset, out=tempNegY);
     And(a=tempNegY, b=inc, out=negY);
+    
+    Or(a=inc, b=load, out=fVal);
 
     ALU(x=prev, y=in, zx=zeroX, nx=negX, 
                       zy=zeroY, ny=negY, 
-                     f=inc, no=negY, out=tempOut);
+                     f=fVal, no=negY, out=tempOut);
 
     Or(a=load, b=inc, out=tempNewValue);
     Or(a=tempNewValue, b=reset, out=newValue);
