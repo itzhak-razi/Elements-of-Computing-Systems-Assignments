@@ -19,5 +19,9 @@ CHIP PC {
 
     PARTS:
     // Implementation missing.
-    ALU(x=in, y=in, zx=reset, zy=reset, f=reset, out=possiblyZeroOut); 
+    Or(a=load, b=reset, out=zeroX);
+    Or(a=inc, b=reset, out=zeroY);
+    ALU(x=prev, y=in, zx=zeroX, nx=inc, zy=zeroY, ny=inc, f=inc, no=inc, out=tempOut);
+    Or(a=inc, b=zeroX, out=newLoad);
+    Register(in=tempOut, load=newLoad, out=out, out=prev);
 }
