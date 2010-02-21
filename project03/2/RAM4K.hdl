@@ -20,7 +20,7 @@ CHIP RAM4K {
     OUT out[16];
 
     PARTS:
-    // Implementation missing.
+    // Works
     DMux8Way(in=load, sel=address[0..2], 
         a=ramALoad,
         b=ramBLoad,
