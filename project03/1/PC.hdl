@@ -18,7 +18,7 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Implementation missing.
+    // Works
     Not(in=load, out=notLoad);
     Not(in=inc, out=notInc);
     Not(in=reset, out=notReset);
@@ -45,11 +45,4 @@ CHIP PC {
     
     Register(in=tempOut, load=newValue, out=out, out=prev);
 
-    /**Not(in=inc, out=doNotInc);
-    Or(a=load, b=reset, out=zeroX);
-    Or(a=inc, b=reset, out=maybeZeroY);
-    And(a=maybeZeroY, b=doNotInc, out=zeroY);
-    ALU(x=prev, y=in, zx=zeroX, nx=inc, zy=zeroY, ny=inc, f=inc, no=inc, out=tempOut);
-    Or(a=inc, b=zeroX, out=newLoad);
-    Register(in=tempOut, load=newLoad, out=out, out=prev);*/
 }
