@@ -19,9 +19,35 @@ CHIP PC {
 
     PARTS:
     // Implementation missing.
+    Not(in=load, out=notLoad);
+    Not(in=inc, out=notInc);
+    Not(in=reset, out=notReset);
+
+    Or(a=reset, b=load, out=zeroX);
+
+    And(a=inc, b=notLoad, out=tempZeroY);
+    Or(a=tempZeroY, b=reset, out=zeroY);
+    
+    And(a=notReset, b=notLoad, out=tempNegX);
+    And(a=tempNegX, b=inc, out=negX);
+
+    And(a=notLoad, b=notReset, out=tempNegY);
+    And(a=tempNegY, b=inc, out=negY);
+
+    ALU(x=prev, y=in, zx=zeroX, nx=negX, 
+                      zy=zeroY, ny=negY, 
+                     f=inc, no=negY, out=tempOut);
+
+    Or(a=load, b=inc, out=tempNewValue);
+    Or(a=tempNewValue, b=reset, out=newValue);
+    
+    Register(in=tempOut, load=newValue, out=out, out=prev);
+
+    /**Not(in=inc, out=doNotInc);
     Or(a=load, b=reset, out=zeroX);
-    Or(a=inc, b=reset, out=zeroY);
+    Or(a=inc, b=reset, out=maybeZeroY);
+    And(a=maybeZeroY, b=doNotInc, out=zeroY);
     ALU(x=prev, y=in, zx=zeroX, nx=inc, zy=zeroY, ny=inc, f=inc, no=inc, out=tempOut);
     Or(a=inc, b=zeroX, out=newLoad);
-    Register(in=tempOut, load=newLoad, out=out, out=prev);
+    Register(in=tempOut, load=newLoad, out=out, out=prev);*/
 }
