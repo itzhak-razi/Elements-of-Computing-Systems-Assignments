@@ -1,4 +1,4 @@
-@16416
+@24576
 D = A
 @R1 //Maximum screen value
 M = D // Sets R1 to 16416, the laste byte that the screen uses
