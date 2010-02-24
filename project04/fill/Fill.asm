@@ -7,12 +7,14 @@ D = A
 M = D
 
 (INFINITE_LOOP)
+@0
+D = !A
 @R0
-D = M + 1
-A = D
-M = 1
-@R0
+A = M
 M = D
+
+@R0
+M = M + 1
 
 (KEYBOARD_TEST) 
 @KBD
