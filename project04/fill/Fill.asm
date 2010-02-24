@@ -27,8 +27,12 @@ M = D
     D = M
     @R0
     D = D - M
-    @RESET
+    @RESET 
     D;JLE
+    
+    @R0
+    A = M
+    M = 0 //Set current screen pointer value to 0
 
     @KBD
     D=M
