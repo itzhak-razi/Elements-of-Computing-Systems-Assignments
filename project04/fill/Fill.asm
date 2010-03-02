@@ -4,13 +4,14 @@ D = A
 M = D // Sets R1 to 16416, the laste byte that the screen uses
 
 
-@SCREEN
-D = A
-@R0
-M = D
+(RESET)
+    @SCREEN
+    D = A - 1
+    @R0
+    M = D 
 
-@KEYBOARD_TEST
-0;JMP
+    @KEYBOARD_TEST 
+    0;JMP
 
 (RESTART)
     @0
@@ -42,11 +43,3 @@ M = D
     @KEYBOARD_TEST
     0;JMP
 
-(RESET)
-    @SCREEN
-    D = A
-    @R0
-    M = D 
-
-    @KEYBOARD_TEST 
-    0;JMP
