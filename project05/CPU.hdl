@@ -40,5 +40,14 @@ CHIP CPU {
 
     PARTS:
     // Implementation missing.
+    Mux(a=instruction, b=ALUOut, sel=instruction[0], out=AIn); //instruction[15] maybe?
+    ARegister(in=AIn, load=instruction[10], out=AOut, out=addressM);
+     
+    Mux(a=AOut, b=inM, sel=instruction[3], out=AOrM);
+    
+    PC(in=AOut, resset=reset, inc=???, load=???, out=pc);
+    DRegister(in=ALUOut, load=instruction[4], out=DOut);
+
+    ALU(x=DOut, y=AOrM, 
 }
 
