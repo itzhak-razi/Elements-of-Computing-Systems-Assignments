@@ -40,14 +40,31 @@ CHIP CPU {
 
     PARTS:
     // Implementation missing.
-    Mux(a=instruction, b=ALUOut, sel=instruction[0], out=AIn); //instruction[15] maybe?
-    ARegister(in=AIn, load=instruction[10], out=AOut, out=addressM);
+    Mux16(a=instruction, b=ALUOut, sel=instruction[15], out=AIn); 
+    ARegister(in=AIn, load=instruction[5], out=AOut, out=addressM); 
      
-    Mux(a=AOut, b=inM, sel=instruction[3], out=AOrM);
+    Mux(a=AOut, b=inM, sel=instruction[12], out=AOrM); 
     
-    PC(in=AOut, resset=reset, inc=???, load=???, out=pc);
-    DRegister(in=ALUOut, load=instruction[4], out=DOut);
+    DRegister(in=ALUOut, load=instruction[4], out=DOut); 
 
-    ALU(x=DOut, y=AOrM, 
+    ALU(x=DOut, y=AOrM, zx=instruction[11], nx=instruction[10], zy=instruction[9], 
+        ny=instruction[8],f=instruction[7], no=instruction[6], zr=isZero, ng=isNegative, 
+        out=ALUOut, out=outM);
+
+   Not(in=isZero, out=notZero);
+   Not(in=isNegative, out=notNegative);
+   And(a=notZero, b=notZero, out=positiveOut);
+   And(x=instruction[0], y=positiveOut, out=jumpIfPos);
+
+   And(x=instruction[1], y=isZero, out=jumpIfZero);
+    
+   And(x=instruction[2], y=isNegative, out=jumpIfNeg);
+    
+   Or(a=jumpIfPos, b=jumpIfNeg, out=maybeJump);
+   Or(a=maybeJump, b=jumpIfZero, out=jumpStatus);
+
+   Not(in=jumpStatus, out=incStatus);
+    
+   PC(in=AOut, resset=reset, inc=incStatus, load=jumpStatus out=pc);
 }
 
