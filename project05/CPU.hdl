@@ -41,9 +41,9 @@ CHIP CPU {
     PARTS:
     // Implementation missing.
     Mux16(a=instruction, b=ALUOut, sel=instruction[15], out=AIn); 
-    ARegister(in=AIn, load=instruction[5], out=AOut, out=addressM); 
+    ARegister(in=AIn, load=instruction[5], out=AOut, out[0..14]=addressM); 
      
-    Mux(a=AOut, b=inM, sel=instruction[12], out=AOrM); 
+    Mux16(a=AOut, b=inM, sel=instruction[12], out=AOrM); 
     
     DRegister(in=ALUOut, load=instruction[4], out=DOut); 
 
@@ -54,17 +54,21 @@ CHIP CPU {
    Not(in=isZero, out=notZero);
    Not(in=isNegative, out=notNegative);
    And(a=notZero, b=notZero, out=positiveOut);
-   And(x=instruction[0], y=positiveOut, out=jumpIfPos);
+   And(a=instruction[0], b=positiveOut, out=jumpIfPos);
 
-   And(x=instruction[1], y=isZero, out=jumpIfZero);
+   And(a=instruction[1], b=isZero, out=jumpIfZero);
     
-   And(x=instruction[2], y=isNegative, out=jumpIfNeg);
+   And(a=instruction[2], b=isNegative, out=jumpIfNeg);
     
    Or(a=jumpIfPos, b=jumpIfNeg, out=maybeJump);
    Or(a=maybeJump, b=jumpIfZero, out=jumpStatus);
 
    Not(in=jumpStatus, out=incStatus);
     
-   PC(in=AOut, resset=reset, inc=incStatus, load=jumpStatus out=pc);
+   PC(in=AOut, reset=reset, inc=incStatus, load=jumpStatus, out[0..14]=pc);
+
+   Not(in=instruction[3], out=notWriteM);
+   Not(in=notWriteM, out=writeMStatus);
+   And(a=instruction[15], b=writeMStatus, out=writeM);
 }
 
