@@ -29,7 +29,7 @@ CHIP Memory {
 
     PARTS:
     // Works
-    RAM4K(in=in, load=load, address=address[0..11], out=ramOut);
+    RAM16K(in=in, load=load, address=address[0..13], out=ramOut); //Possibly not right
     And(a=address[14], b=load, out=loadScreen);
     Screen(in=in, load=loadScreen, address=address[0..12], out=screenOut);
     Keyboard(out=keyboardOut); 
