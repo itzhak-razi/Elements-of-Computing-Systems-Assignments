@@ -29,10 +29,21 @@ CHIP Memory {
 
     PARTS:
     // Works
-    RAM16K(in=in, load=load, address=address[0..13], out=ramOut); //Possibly not right
-    And(a=address[14], b=load, out=loadScreen);
+
+    Not(in=address[13], out=notAddress13);
+    Not(in=address[14], out=notAddress14);
+    
+    And(a=address[14], b=address[13], out=keyboardStatus);
+    And(a=address[14], b=notAddress13, out=screenStatus);
+    
+    And(a=load, b=notAddress14, out=loadRam);
+    And(a=load, b=screenStatus, out=loadScreen);
+
+    RAM16K(in=in, load=loadRam, address=address[0..13], out=ramOut);
     Screen(in=in, load=loadScreen, address=address[0..12], out=screenOut);
-    Keyboard(out=keyboardOut); 
-    Mux16(sel=address[13], a=screenOut, b=keyboardOut, out=screenOrKeyboardOut);
-    Mux16(sel=address[14], a=ramOut, b=screenOrKeyboardOut, out=out);
+    Keyboard(out=keyboardOut);
+
+    Mux16(a=screenOut, b=keyboardOut, sel=address[13], out=screenOrKeyboardOut);
+    Mux16(a=ramOut, b=screenOrKeyboardOut,  sel=address[14], out=out);
+
 }
