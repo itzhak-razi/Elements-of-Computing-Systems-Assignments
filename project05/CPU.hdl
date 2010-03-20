@@ -39,7 +39,7 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Implementation missing.
+    // Works
     Mux16(a=instruction, b=ALUOut, sel=instruction[15], out=AIn); 
     Not(in=instruction[15], out=notFifteen);
     Or(a=instruction[5], b=notFifteen, out=loadA);
