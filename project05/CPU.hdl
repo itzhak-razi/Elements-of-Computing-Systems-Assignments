@@ -56,7 +56,7 @@ CHIP CPU {
 
    Not(in=isZero, out=notZero);
    Not(in=isNegative, out=notNegative);
-   And(a=notZero, b=notZero, out=positiveOut);
+   And(a=notZero, b=notNegative, out=positiveOut);
    And(a=instruction[0], b=positiveOut, out=jumpIfPos);
 
    And(a=instruction[1], b=isZero, out=jumpIfZero);
