@@ -3,11 +3,15 @@ class Parser:
     A_COMMAND = 0
     C_COMMAND = 1
     L_COMMAND = 2
-       
+    JMP_CMDS = ["JGT", "JEQ", "JGE", "JLT", "JNE", "JLE", "JMP"]
+
     def __init__(self, fileInput):
         file = fileInput.read()
         self.commands = file.splitlines()
         self.counter = 0
+
+    def current(self):
+        return self.commands[self.counter].strip()
 
     def hasMorecommands(self):
        return self.counter < len(self.commands) 
@@ -20,11 +24,11 @@ class Parser:
     def commandType(self):
         current = self.commands[self.counter].strip()
         if current[0] == '(' and current[len(current)] == ')':
-            return L_COMMAND
+            return Parser.L_COMMAND
         elif current[0] == '@':
-            return A_COMMAND
+            return Parser.A_COMMAND
         else:
-            return C_COMMAND
+            return Parser.C_COMMAND
            
     def symbol(self):
         current = self.commands[self.counter].strip()
@@ -45,7 +49,17 @@ class Parser:
             return None
 
     def comp(self):
-
+        current = self.current()
+        index = current.find(';')
+        if index > -1:
+            current = current[:index]
+        index = current.find('=')
+        if index > -1:
+            current = current[index:]
+        return current
+         
     def jump(self):
-        jumpCmds = ["JGT", "JEQ", "JGE", "JLT", "JNE", "JLE", "JMP"]
-
+        current = self.current()
+        for jmp in Parser.JMP_CMDS:
+            if jmp in current:
+               return jmp
