@@ -13,13 +13,12 @@ class Parser:
     def current(self):
         return self.commands[self.counter].strip()
 
-    def hasMorecommands(self):
+    def hasMoreCommands(self):
        return self.counter < len(self.commands) 
 
     def advance(self):
-        value = self.commands[self.counter]
         self.counter += 1 
-        return value
+        return self.commands[self.counter]
 
     def commandType(self):
         current = self.commands[self.counter].strip()
@@ -32,9 +31,9 @@ class Parser:
            
     def symbol(self):
         current = self.commands[self.counter].strip()
-        if self.commandType() == A_COMMAND:
+        if self.commandType() == Parser.A_COMMAND:
             return current[1:]
-        elif self.commandType() == L_COMMAND:
+        elif self.commandType() == Parser.L_COMMAND:
             return current[1:len(current) - 2] 
         else:
             raise TypeError("Trying to get symbol on a C_COMMAND")
@@ -55,8 +54,8 @@ class Parser:
             current = current[:index]
         index = current.find('=')
         if index > -1:
-            current = current[index:]
-        return current
+            current = current[index + 1:]
+        return current.strip()
          
     def jump(self):
         current = self.current()
