@@ -42,7 +42,7 @@ class Parser:
         current = self.current()
         if self.commandType() == Parser.A_COMMAND:
             result = re.search("@.[^\s(//)]*", current)
-            return result[1:]
+            return result.group(0)[1:]
         elif self.commandType() == Parser.L_COMMAND:
             result = re.search("\(..*\)", current)
             return result[1:len(current) - 2] 
