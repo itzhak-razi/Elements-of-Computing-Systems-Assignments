@@ -1,12 +1,15 @@
 def dest(value):
+    if(value == None):
+        return "000"
+
     #Do not change order in array
     possible = ["A", "D", "M"]
     result = ""
-        for current in possible:
-            if current in value:
-                result += "1"
-            else:
-                result += "0" 
+    for current in possible:
+        if current in value:
+            result += "1"
+        else:
+            result += "0" 
     return result
 
 
@@ -18,7 +21,7 @@ def comp(value):
     else:
         result += "0"
 
-    secondVar = "A|M"
+    secondVar = "(A|M)"
     plusOneRegex = "\s*\+\s*1"
     minusOneRegex = "\s*-\s*1"
     if "0" == value:
@@ -60,6 +63,8 @@ def comp(value):
     return result
 
 def jump(value):
+    if value == None:
+        return "000"
     result = ""
     import re
     possible = ["L|NE|MP", "[^N]E|MP", "G|NE|MP"]

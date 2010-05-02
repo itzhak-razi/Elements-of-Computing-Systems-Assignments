@@ -1,28 +1,36 @@
 class Parser:
-    
     A_COMMAND = 0
     C_COMMAND = 1
     L_COMMAND = 2
     JMP_CMDS = ["JGT", "JEQ", "JGE", "JLT", "JNE", "JLE", "JMP"]
 
     def __init__(self, fileInput):
+        import re
         file = fileInput.read()
-        self.commands = file.splitlines()
+        lines = file.splitlines()
+        #print(self.commands)
+        self.commands = []
+        while len(lines) > 0:
+            current = lines.pop(0)
+            stripped = current.strip()
+            if not(re.match("//", stripped) or len(stripped) == 0):
+                self.commands.append(stripped)
         self.counter = 0
 
     def current(self):
-        return self.commands[self.counter].strip()
+        return self.commands[self.counter]
 
     def hasMoreCommands(self):
-       return self.counter < len(self.commands) 
+       return self.counter + 1 < len(self.commands) 
 
     def advance(self):
-        self.counter += 1 
+        self.counter += 1
         return self.commands[self.counter]
 
     def commandType(self):
-        current = self.commands[self.counter].strip()
-        if current[0] == '(' and current[len(current)] == ')':
+        import re
+        current = self.current()
+        if current[0] == '(' and None != re.search('\)', current):
             return Parser.L_COMMAND
         elif current[0] == '@':
             return Parser.A_COMMAND
@@ -30,11 +38,14 @@ class Parser:
             return Parser.C_COMMAND
            
     def symbol(self):
-        current = self.commands[self.counter].strip()
+        import re
+        current = self.current()
         if self.commandType() == Parser.A_COMMAND:
-            return current[1:]
+            result = re.search("@.[^\s(//)]*", current)
+            return result[1:]
         elif self.commandType() == Parser.L_COMMAND:
-            return current[1:len(current) - 2] 
+            result = re.search("\(..*\)", current)
+            return result[1:len(current) - 2] 
         else:
             raise TypeError("Trying to get symbol on a C_COMMAND")
 
@@ -48,6 +59,7 @@ class Parser:
             return None
 
     def comp(self):
+        import re
         current = self.current()
         index = current.find(';')
         if index > -1:
@@ -55,7 +67,8 @@ class Parser:
         index = current.find('=')
         if index > -1:
             current = current[index + 1:]
-        return current.strip()
+        result = re.search("[^\s|(//)]*", current)
+        return result.group(0)
          
     def jump(self):
         current = self.current()
