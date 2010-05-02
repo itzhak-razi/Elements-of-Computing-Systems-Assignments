@@ -15,7 +15,7 @@ class Parser:
             stripped = current.strip()
             if not(re.match("//", stripped) or len(stripped) == 0):
                 self.commands.append(stripped)
-        self.counter = 0
+        self.counter = -1
 
     def current(self):
         return self.commands[self.counter]
