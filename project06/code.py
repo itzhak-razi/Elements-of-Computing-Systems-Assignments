@@ -32,7 +32,7 @@ def comp(value):
         result += "111010"
     elif "D" == value:
         result += "001100"
-    elif re.match(secondVar, value):
+    elif re.match(secondVar + "$", value):
         result += "110000"
     elif "!D" == value:
         result += "001101"

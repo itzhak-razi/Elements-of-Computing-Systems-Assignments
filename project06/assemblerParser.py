@@ -8,7 +8,6 @@ class Parser:
         import re
         file = fileInput.read()
         lines = file.splitlines()
-        #print(self.commands)
         self.commands = []
         while len(lines) > 0:
             current = lines.pop(0)
@@ -45,7 +44,7 @@ class Parser:
             return result.group(0)[1:]
         elif self.commandType() == Parser.L_COMMAND:
             result = re.search("\(..*\)", current)
-            return result[1:len(current) - 2] 
+            return result.group(0)[1:len(current) - 1]
         else:
             raise TypeError("Trying to get symbol on a C_COMMAND")
 
@@ -67,8 +66,8 @@ class Parser:
         index = current.find('=')
         if index > -1:
             current = current[index + 1:]
-        result = re.search("[^\s|(//)]*", current)
-        return result.group(0)
+        result = re.search("[^/]*", current)
+        return result.group(0).strip()
          
     def jump(self):
         current = self.current()
