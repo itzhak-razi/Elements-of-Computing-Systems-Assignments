@@ -36,31 +36,31 @@ class Parser:
     
     def commandType(self):
         import re
-        for command in ARITHMETIC_COMMANDS:
-            if command == current()
-                return C_ARITHMETIC
+        for command in Parser.ARITHMETIC_COMMANDS:
+            if command == self.current():
+                return Parser.C_ARITHMETIC
         
-        if re.match("push", current()):
-            return C_PUSH
+        if re.match("push", self.current()):
+            return Parser.C_PUSH
 
 
 
     def arg1(self):
         import re
-        if commandType() == C_RETURN:
+        if self.commandType() == Parser.C_RETURN:
             raise TypeError("Trying to get the first argument on a return command")
 
-        if commandType() == C_ARITHMETIC:
-            result=re.match("\w+", current())
+        if self.commandType() == Parser.C_ARITHMETIC:
+            result=re.match("\w+", self.current())
             return result.group(0)
         else:
-            result = re.search("\w+\s+(\w+)", current)
+            result = re.search("\w+\s+(\w+)", self.current)
             return result.group(1)
              
     def arg2(self):
         import re
         type = commandType()
-        if type != C_PUSH and type != C_POP and type != C_FUNCTION and type != C_CALL:
+        if type != Parser.C_PUSH and type != Parser.C_POP and type != Parser.C_FUNCTION and type != Parser.C_CALL:
            raise TypeError("Cannot get the second argument for this command")
 
         result = re.search("\w+\s+\w+\s+(\w+)")
