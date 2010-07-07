@@ -54,14 +54,14 @@ class Parser:
             result=re.match("\w+", self.current())
             return result.group(0)
         else:
-            result = re.search("\w+\s+(\w+)", self.current)
+            result = re.search("\w+\s+(\w+)", self.current())
             return result.group(1)
              
     def arg2(self):
         import re
-        type = commandType()
+        type = self.commandType()
         if type != Parser.C_PUSH and type != Parser.C_POP and type != Parser.C_FUNCTION and type != Parser.C_CALL:
            raise TypeError("Cannot get the second argument for this command")
 
-        result = re.search("\w+\s+\w+\s+(\w+)")
+        result = re.search("\w+\s+\w+\s+(\w+)", self.current())
         return result.group(1)

@@ -35,8 +35,11 @@ def parse(parser, codeWriter, fileName):
     codeWriter.setFileName(fileName)
     while parser.hasMoreCommands():
         parser.advance()
+        print("Type is " + str(parser.commandType()) + " and command is " + parser.current())
         if parser.commandType() == Parser.C_ARITHMETIC:
             codeWriter.writeArithmetic(parser.arg1())
-        elif parser.commandType() == Parser.C_PUSH | parser.commandType() == Parser.C_POP:
+        elif (parser.commandType() == Parser.C_PUSH) | (parser.commandType() == Parser.C_POP):
             codeWriter.writePushPop(parser.commandType(), parser.arg1(), parser.arg2())
+        else:
+            print("Well here we are")
 

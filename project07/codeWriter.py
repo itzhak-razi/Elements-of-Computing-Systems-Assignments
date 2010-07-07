@@ -38,7 +38,7 @@ class CodeWriter:
             if segment == "constant":
                 self.outputFile.write("@" + str(index) + "\n")
                 self.outputFile.write("D=A\n")
-                push(self)
+                self.push()
     
     #Pushes the value in D into the stack
     def push(self):
