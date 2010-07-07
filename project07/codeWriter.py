@@ -17,18 +17,21 @@ class CodeWriter:
         if command == "add":
             self.pop()
             self.outputFile.write("@SP\n")
+            self.outputFile.write("A=M-1\n")
             self.outputFile.write("M=M+D\n")
         elif command == "sub":
             self.pop()
             self.outputFile.write("@SP\n")
-            self.outputFile.write("M=D-M\n")
+            self.outputFile.write("A=M-1\n")
+            self.outputFile.write("M=D-M\n") #Should it be M-D?
         elif command == "neg":
+            self.pop() 
             self.outputFile.write("@SP\n")
-            self.outputFile.write("M=-M\n")
-        elif command == "eq":
+            self.outputFile.write("M=-D\n")
+        """elif command == "eq":
             self.pop()
             self.outputFile.write("@SP\n")
-            self.outputFile
+            self.outputFile"""
             
 
     def writePushPop(self, command, segment, index):
