@@ -10,21 +10,22 @@ def translate(fileName):
 
 
     if ext == '':
+        outputFile = open(os.path.join(fileName, os.path.basename(os.path.abspath(fileName)) + ".asm"), 'w')
         for currentFile in os.listdir(fileName):
             if os.path.splitext(currentFile)[1] == '.vm':
-                files.append(currentFile)
+                files.append(os.path.join(fileName, currentFile))
     elif ext == '.vm':
+        outputFile = open(os.path.splitext(fileName)[0] + ".asm", 'w')
         files.append(fileName)
     else:
         raise Exception("File provided doesn't have a .vm extension and is not a directory")
 
     
-    outputFile = open(os.path.splitext(fileName)[0] + ".asm", 'w')
     codeWriter = CodeWriter(outputFile)
-    for fileName in files:
-        file = open(fileName, 'r')
+    for file in files:
+        file = open(file, 'r')
         parser = Parser(file)
-        parse(parser, codeWriter, fileName)
+        parse(parser, codeWriter, file)
     codeWriter.close() 
 
 
