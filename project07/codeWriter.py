@@ -2,13 +2,7 @@ class CodeWriter:
 
     def __init__(self, fileOut):
         self.outputFile = fileOut
-        """ 
-        #Initialization code
-        self.outputFile.write("@255\n")
-        self.outputFile.write("D=A\n")
-        self.outputFile.write("@SP\n")
-        self.outputFile.write("M=D\n")
-        """
+        self.negateCounter = 0
 
     def setFileName(self, fileName):
         self.currentName = fileName
@@ -23,15 +17,44 @@ class CodeWriter:
             self.pop()
             self.outputFile.write("@SP\n")
             self.outputFile.write("A=M-1\n")
-            self.outputFile.write("M=D-M\n") #Should it be M-D?
+            self.outputFile.write("M=M-D\n") #Should it be M-D?
         elif command == "neg":
-            self.pop() 
-            self.outputFile.write("@SP\n")
-            self.outputFile.write("M=-D\n")
-        """elif command == "eq":
             self.pop()
             self.outputFile.write("@SP\n")
-            self.outputFile"""
+            self.outputFile.write("A=M\n")
+            self.outputFile.write("M=-D\n")
+        elif command == "and":
+            self.pop()
+            self.outputFile.write("@SP\n")
+            self.outputFile.write("A=M-1\n")
+            self.outputFile.write("M=M & D\n")
+        elif command == "or":
+            self.pop()
+            self.outputFile.write("@SP\n")
+            self.outputFile.write("A=M-1\n")
+            self.outputFile.write("M=M | D\n")
+        elif command == "not":
+            self.pop()
+            self.outputFile.write("@SP\n")
+            self.outputFile.write("A=M\n")
+            self.outputFile.write("M=!D")
+        elif command == "eq":
+            label = "negate" + str(negateCounter)
+            self.pop()
+            self.outputFile.write("@SP\n")
+            self.outputFile.write("A=M-1\n")
+            self.outputFile.write("D=M-D\n") #or D-M, doesn't matter
+            self.outputFile.write("@" + label + "\n")
+            self.outputFile.write("D;JEQ\n")
+            self.outputFile.write("D=1\n")
+            self.outputFile.write("(" + label + ")\n")
+            self.outputFile.write("@SP\n")
+            self.outputFile.write("A=M-1\n")
+            self.outputFile.write("M=!D\n")
+        elif command == "lt":
+            self.outputFile.write("//TODO")
+        elif command == "gt":
+            self.outputFile.write("//TODO")
             
 
     def writePushPop(self, command, segment, index):
