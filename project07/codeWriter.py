@@ -39,7 +39,8 @@ class CodeWriter:
             self.outputFile.write("A=M\n")
             self.outputFile.write("M=!D")
         elif command == "eq":
-            label = "negate" + str(negateCounter)
+            label = "negate" + str(self.negateCounter)
+            self.negateCounter += 1
             self.pop()
             self.outputFile.write("@SP\n")
             self.outputFile.write("A=M-1\n")
@@ -52,9 +53,35 @@ class CodeWriter:
             self.outputFile.write("A=M-1\n")
             self.outputFile.write("M=!D\n")
         elif command == "lt":
-            self.outputFile.write("//TODO")
+            label = "negate" + str(self.negateCounter)
+            self.negateCounter += 1
+            self.pop()
+            self.outputFile.write("@SP\n")
+            self.outputFile.write("A=M-1\n")
+            self.outputFile.write("D=M-D\n")
+            self.outputFile.write("@" + label + "\n")
+            self.outputFile.write("D;JLT\n")
+            self.outputFile.write("D=0\n")
+            self.outputFile.write("D=!D\n")
+            self.outputFile.write("(" + label + ")\n")
+            self.outputFile.write("@SP\n")
+            self.outputFile.write("A=M-1\n")
+            self.outputFile.write("M=!D\n")
         elif command == "gt":
-            self.outputFile.write("//TODO")
+            label = "negate" + str(self.negateCounter)
+            self.negateCounter += 1
+            self.pop()
+            self.outputFile.write("@SP\n")
+            self.outputFile.write("A=M-1\n")
+            self.outputFile.write("D=M-D\n")
+            self.outputFile.write("@" + label + "\n")
+            self.outputFile.write("D;JGT\n")
+            self.outputFile.write("D=0\n")
+            self.outputFile.write("D=!D\n")
+            self.outputFile.write("(" + label + ")\n")
+            self.outputFile.write("@SP\n")
+            self.outputFile.write("A=M-1\n")
+            self.outputFile.write("M=!D\n")
             
 
     def writePushPop(self, command, segment, index):
