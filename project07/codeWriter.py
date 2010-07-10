@@ -2,7 +2,7 @@ class CodeWriter:
 
     def __init__(self, fileOut):
         self.outputFile = fileOut
-        self.negateCounter = 0
+        self.labelCounter = 0
 
     def setFileName(self, fileName):
         self.currentName = fileName
@@ -17,12 +17,11 @@ class CodeWriter:
             self.pop()
             self.outputFile.write("@SP\n")
             self.outputFile.write("A=M-1\n")
-            self.outputFile.write("M=M-D\n") #Should it be M-D?
+            self.outputFile.write("M=M-D\n") 
         elif command == "neg":
-            self.pop()
             self.outputFile.write("@SP\n")
-            self.outputFile.write("A=M\n")
-            self.outputFile.write("M=-D\n")
+            self.outputFile.write("A=M-1\n")
+            self.outputFile.write("M=-M\n")
         elif command == "and":
             self.pop()
             self.outputFile.write("@SP\n")
@@ -39,8 +38,8 @@ class CodeWriter:
             self.outputFile.write("A=M\n")
             self.outputFile.write("M=!D")
         elif command == "eq":
-            label = "negate" + str(self.negateCounter)
-            self.negateCounter += 1
+            label = "negate" + str(self.labelCounter)
+            self.labelCounter += 1
             self.pop()
             self.outputFile.write("@SP\n")
             self.outputFile.write("A=M-1\n")
@@ -53,35 +52,9 @@ class CodeWriter:
             self.outputFile.write("A=M-1\n")
             self.outputFile.write("M=!D\n")
         elif command == "lt":
-            label = "negate" + str(self.negateCounter)
-            self.negateCounter += 1
-            self.pop()
-            self.outputFile.write("@SP\n")
-            self.outputFile.write("A=M-1\n")
-            self.outputFile.write("D=M-D\n")
-            self.outputFile.write("@" + label + "\n")
-            self.outputFile.write("D;JLT\n")
-            self.outputFile.write("D=0\n")
-            self.outputFile.write("D=!D\n")
-            self.outputFile.write("(" + label + ")\n")
-            self.outputFile.write("@SP\n")
-            self.outputFile.write("A=M-1\n")
-            self.outputFile.write("M=!D\n")
+            self.greaterThanLessThanJump("JLT")
         elif command == "gt":
-            label = "negate" + str(self.negateCounter)
-            self.negateCounter += 1
-            self.pop()
-            self.outputFile.write("@SP\n")
-            self.outputFile.write("A=M-1\n")
-            self.outputFile.write("D=M-D\n")
-            self.outputFile.write("@" + label + "\n")
-            self.outputFile.write("D;JGT\n")
-            self.outputFile.write("D=0\n")
-            self.outputFile.write("D=!D\n")
-            self.outputFile.write("(" + label + ")\n")
-            self.outputFile.write("@SP\n")
-            self.outputFile.write("A=M-1\n")
-            self.outputFile.write("M=!D\n")
+            self.greaterThanLessThanJump("JGT")
             
 
     def writePushPop(self, command, segment, index):
@@ -107,6 +80,28 @@ class CodeWriter:
         self.outputFile.write("M=M-1\n")
         self.outputFile.write("A=M\n")
         self.outputFile.write("D=M\n")
+
+
+    def greaterThanLessThanJump(self, jumpCmd):
+            negateLbl = "negate" + str(self.labelCounter)
+            setTrueLbl = "setTrue" + str(self.labelCounter)
+            self.labelCounter += 1
+            self.pop()
+            self.outputFile.write("@SP\n")
+            self.outputFile.write("A=M-1\n")
+            self.outputFile.write("D=M-D\n")
+            self.outputFile.write("@" + setTrueLbl + "\n")
+            self.outputFile.write("D;" + jumpCmd + "\n")
+            self.outputFile.write("D=0\n")
+            self.outputFile.write("D=!D\n")
+            self.outputFile.write("@" + negateLbl + "\n")
+            self.outputFile.write("0;JMP\n")
+            self.outputFile.write("(" + setTrueLbl + ")\n")
+            self.outputFile.write("D=0\n")
+            self.outputFile.write("(" + negateLbl + ")\n")
+            self.outputFile.write("@SP\n")
+            self.outputFile.write("A=M-1\n")
+            self.outputFile.write("M=!D\n")
 
     def close(self):
         self.outputFile.close()
