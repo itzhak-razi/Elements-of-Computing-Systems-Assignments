@@ -65,6 +65,16 @@ class CodeWriter:
                 self.outputFile.write("@" + str(index) + "\n")
                 self.outputFile.write("D=A\n")
                 self.push()
+            if segment == "argument":
+                self.pushRAMValues("ARG", index)
+            if segment == "local":
+                self.pushRAMValues("LCL", index)
+            if segment == "this":
+                self.pushRAMValues("THIS", index)
+            if segment == "that":
+                self.pushRAMValues("THAT", index)
+            if segment == "temp":
+                self.pushRAMValues("0", index) 
     
     #Pushes the value in D into the stack
     def push(self):
@@ -80,7 +90,14 @@ class CodeWriter:
         self.outputFile.write("M=M-1\n")
         self.outputFile.write("A=M\n")
         self.outputFile.write("D=M\n")
-
+    
+    def pushRAMValues(self, segmentVar, index):
+        self.outputFile.write("@" + segmentVar + "\n")
+        self.outputFile.write("D=M\n")
+        self.outputFile.write("@" + index + "\n")
+        self.outputFile.write("A=D+A\n")
+        self.outputFile.write("D=M\n")
+        self.push()
 
     def greaterThanLessThanJump(self, jumpCmd):
             negateLbl = "negate" + str(self.labelCounter)
