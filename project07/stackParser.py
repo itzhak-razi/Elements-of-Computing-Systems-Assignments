@@ -39,9 +39,10 @@ class Parser:
         for command in Parser.ARITHMETIC_COMMANDS:
             if command == self.current():
                 return Parser.C_ARITHMETIC
-        
         if re.match("push", self.current()):
             return Parser.C_PUSH
+        elif re.match("pop", self.current()):
+            return Parser.C_POP
 
 
 

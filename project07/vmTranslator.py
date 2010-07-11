@@ -40,5 +40,5 @@ def parse(parser, codeWriter, fileName):
         elif (parser.commandType() == Parser.C_PUSH) | (parser.commandType() == Parser.C_POP):
             codeWriter.writePushPop(parser.commandType(), parser.arg1(), parser.arg2())
         else:
-            print("Well here we are")
+            print("Unhandled command type, type is " + str(parser.commandType()))
 
