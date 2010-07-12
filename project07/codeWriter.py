@@ -82,30 +82,21 @@ class CodeWriter:
                 self.push()
         if command == Parser.C_POP:
             if segment == "argument":
-                self.storeToRAM("ARG", index)
+                self.preambleLocationInMemory("ARG")
+                self.storeToRAM(index)
             if segment == "local":
-                self.storeToRAM("LCL", index)
+                self.preambleLocationInMemory("LCL")
+                self.storeToRAM(index)
             if segment == "this":
-                self.storeToRAM("THIS", index)
+                self.preambleLocationInMemory("THIS")
+                self.storeToRAM(index)
             if segment == "that":
-                self.storeToRAM("THAT", index)
+                self.preambleLocationInMemory("THAT")
+                self.storeToRAM(index)
             if segment == "temp":
-                self.outputFile.write("@5\n")
-                self.outputFile.write("D=A\n")
-                self.outputFile.write("@13\n") #13 being a temp register
-                self.outputFile.write("M=D\n")
-                self.outputFile.write("@" + index + "\n")
-                self.outputFile.write("D=A\n")
-                self.outputFile.write("@13\n")
-                self.outputFile.write("M=M+D\n")
-                self.outputFile.write("@SP\n")
-                self.outputFile.write("M=M-1\n")
-                self.outputFile.write("A=M\n")
-                self.outputFile.write("D=M\n")
-                self.outputFile.write("@13\n")
-                self.outputFile.write("A=M\n")
-                self.outputFile.write("M=D\n")
-    
+                self.preambleLocationIsMemory("5")
+                self.storeToRAM(index)
+
     #Pushes the value in D into the stack
     def push(self):
         self.outputFile.write("@SP\n")
@@ -129,9 +120,18 @@ class CodeWriter:
         self.outputFile.write("D=M\n")
         self.push()
 
-    def storeToRAM(self, segmentVar, index):
+    def preambleLocationInMemory(self, segmentVar):
         self.outputFile.write("@" + segmentVar + "\n")
         self.outputFile.write("D=M\n")
+
+    def preambleLocationIsMemory(self, memoryLoc):
+        self.outputFile.write("@" + str(memoryLoc) + "\n")
+        self.outputFile.write("D=A\n")
+
+    #Pops stack and puts it into a memory location index spaces away from the memory
+    #location currently in D.  premableLocationIsMemory() or preambleLocationInMemory()
+    #may be called to set up the D value.
+    def storeToRAM(self, index):
         self.outputFile.write("@13\n") #13 being a temp register
         self.outputFile.write("M=D\n")
         self.outputFile.write("@" + index + "\n")
