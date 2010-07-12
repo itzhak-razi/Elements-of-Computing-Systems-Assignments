@@ -66,15 +66,45 @@ class CodeWriter:
                 self.outputFile.write("D=A\n")
                 self.push()
             if segment == "argument":
-                self.pushRAMValues("ARG", index)
+                self.pushFromRAM("ARG", index)
             if segment == "local":
-                self.pushRAMValues("LCL", index)
+                self.pushFromRAM("LCL", index)
             if segment == "this":
-                self.pushRAMValues("THIS", index)
+                self.pushFromRAM("THIS", index)
             if segment == "that":
-                self.pushRAMValues("THAT", index)
+                self.pushFromRAM("THAT", index)
             if segment == "temp":
-                self.pushRAMValues("0", index) 
+                self.outputFile.write("@5\n")
+                self.outputFile.write("D=A\n")
+                self.outputFile.write("@" + index + "\n")
+                self.outputFile.write("A=D+A\n")
+                self.outputFile.write("D=M\n")
+                self.push()
+        if command == Parser.C_POP:
+            if segment == "argument":
+                self.storeToRAM("ARG", index)
+            if segment == "local":
+                self.storeToRAM("LCL", index)
+            if segment == "this":
+                self.storeToRAM("THIS", index)
+            if segment == "that":
+                self.storeToRAM("THAT", index)
+            if segment == "temp":
+                self.outputFile.write("@5\n")
+                self.outputFile.write("D=A\n")
+                self.outputFile.write("@13\n") #13 being a temp register
+                self.outputFile.write("M=D\n")
+                self.outputFile.write("@" + index + "\n")
+                self.outputFile.write("D=A\n")
+                self.outputFile.write("@13\n")
+                self.outputFile.write("M=M+D\n")
+                self.outputFile.write("@SP\n")
+                self.outputFile.write("M=M-1\n")
+                self.outputFile.write("A=M\n")
+                self.outputFile.write("D=M\n")
+                self.outputFile.write("@13\n")
+                self.outputFile.write("A=M\n")
+                self.outputFile.write("M=D\n")
     
     #Pushes the value in D into the stack
     def push(self):
@@ -91,7 +121,7 @@ class CodeWriter:
         self.outputFile.write("A=M\n")
         self.outputFile.write("D=M\n")
     
-    def pushRAMValues(self, segmentVar, index):
+    def pushFromRAM(self, segmentVar, index):
         self.outputFile.write("@" + segmentVar + "\n")
         self.outputFile.write("D=M\n")
         self.outputFile.write("@" + index + "\n")
@@ -99,26 +129,43 @@ class CodeWriter:
         self.outputFile.write("D=M\n")
         self.push()
 
+    def storeToRAM(self, segmentVar, index):
+        self.outputFile.write("@" + segmentVar + "\n")
+        self.outputFile.write("D=M\n")
+        self.outputFile.write("@13\n") #13 being a temp register
+        self.outputFile.write("M=D\n")
+        self.outputFile.write("@" + index + "\n")
+        self.outputFile.write("D=A\n")
+        self.outputFile.write("@13\n")
+        self.outputFile.write("M=M+D\n")
+        self.outputFile.write("@SP\n")
+        self.outputFile.write("M=M-1\n")
+        self.outputFile.write("A=M\n")
+        self.outputFile.write("D=M\n")
+        self.outputFile.write("@13\n")
+        self.outputFile.write("A=M\n")
+        self.outputFile.write("M=D\n")
+        
     def greaterThanLessThanJump(self, jumpCmd):
-            negateLbl = "negate" + str(self.labelCounter)
-            setTrueLbl = "setTrue" + str(self.labelCounter)
-            self.labelCounter += 1
-            self.pop()
-            self.outputFile.write("@SP\n")
-            self.outputFile.write("A=M-1\n")
-            self.outputFile.write("D=M-D\n")
-            self.outputFile.write("@" + setTrueLbl + "\n")
-            self.outputFile.write("D;" + jumpCmd + "\n")
-            self.outputFile.write("D=0\n")
-            self.outputFile.write("D=!D\n")
-            self.outputFile.write("@" + negateLbl + "\n")
-            self.outputFile.write("0;JMP\n")
-            self.outputFile.write("(" + setTrueLbl + ")\n")
-            self.outputFile.write("D=0\n")
-            self.outputFile.write("(" + negateLbl + ")\n")
-            self.outputFile.write("@SP\n")
-            self.outputFile.write("A=M-1\n")
-            self.outputFile.write("M=!D\n")
+        negateLbl = "negate" + str(self.labelCounter)
+        setTrueLbl = "setTrue" + str(self.labelCounter)
+        self.labelCounter += 1
+        self.pop()
+        self.outputFile.write("@SP\n")
+        self.outputFile.write("A=M-1\n")
+        self.outputFile.write("D=M-D\n")
+        self.outputFile.write("@" + setTrueLbl + "\n")
+        self.outputFile.write("D;" + jumpCmd + "\n")
+        self.outputFile.write("D=0\n")
+        self.outputFile.write("D=!D\n")
+        self.outputFile.write("@" + negateLbl + "\n")
+        self.outputFile.write("0;JMP\n")
+        self.outputFile.write("(" + setTrueLbl + ")\n")
+        self.outputFile.write("D=0\n")
+        self.outputFile.write("(" + negateLbl + ")\n")
+        self.outputFile.write("@SP\n")
+        self.outputFile.write("A=M-1\n")
+        self.outputFile.write("M=!D\n")
 
     def close(self):
         self.outputFile.close()
