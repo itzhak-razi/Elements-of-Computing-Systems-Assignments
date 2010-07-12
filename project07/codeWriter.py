@@ -80,6 +80,9 @@ class CodeWriter:
             if segment == "temp":
                 self.preambleLocationIsMemory("5")
                 self.pushFromRAM(index)
+            if segment == "pointer":
+                self.preambleLocationIsMemory("3")
+                self.pushFromRAM(index)
         if command == Parser.C_POP:
             if segment == "argument":
                 self.preambleLocationInMemory("ARG")
@@ -95,6 +98,9 @@ class CodeWriter:
                 self.storeToRAM(index)
             if segment == "temp":
                 self.preambleLocationIsMemory("5")
+                self.storeToRAM(index)
+            if segment == "pointer":
+                self.preambleLocationIsMemory("3")
                 self.storeToRAM(index)
 
     #Pushes the value in D into the stack
