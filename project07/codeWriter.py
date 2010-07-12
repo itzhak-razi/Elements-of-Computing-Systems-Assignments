@@ -65,43 +65,47 @@ class CodeWriter:
                 self.outputFile.write("@" + str(index) + "\n")
                 self.outputFile.write("D=A\n")
                 self.push()
-            if segment == "argument":
+            elif segment == "argument":
                 self.preambleLocationInMemory("ARG")
                 self.pushFromRAM(index)
-            if segment == "local":
+            elif segment == "local":
                 self.preambleLocationInMemory("LCL")
                 self.pushFromRAM(index)
-            if segment == "this":
+            elif segment == "this":
                 self.preambleLocationInMemory("THIS")
                 self.pushFromRAM(index)
-            if segment == "that":
+            elif segment == "that":
                 self.preambleLocationInMemory("THAT")
                 self.pushFromRAM(index)
-            if segment == "temp":
+            elif segment == "temp":
                 self.preambleLocationIsMemory("5")
                 self.pushFromRAM(index)
-            if segment == "pointer":
+            elif segment == "pointer":
                 self.preambleLocationIsMemory("3")
                 self.pushFromRAM(index)
-        if command == Parser.C_POP:
+            else:
+                print("ERROR: segment undefined, segment given - " + segment)
+        elif command == Parser.C_POP:
             if segment == "argument":
                 self.preambleLocationInMemory("ARG")
                 self.storeToRAM(index)
-            if segment == "local":
+            elif segment == "local":
                 self.preambleLocationInMemory("LCL")
                 self.storeToRAM(index)
-            if segment == "this":
+            elif segment == "this":
                 self.preambleLocationInMemory("THIS")
                 self.storeToRAM(index)
-            if segment == "that":
+            elif segment == "that":
                 self.preambleLocationInMemory("THAT")
                 self.storeToRAM(index)
-            if segment == "temp":
+            elif segment == "temp":
                 self.preambleLocationIsMemory("5")
                 self.storeToRAM(index)
-            if segment == "pointer":
+            elif segment == "pointer":
                 self.preambleLocationIsMemory("3")
                 self.storeToRAM(index)
+            else:
+                print("ERROR: segment undefined, segment given - " + segment)
 
     #Pushes the value in D into the stack
     def push(self):
