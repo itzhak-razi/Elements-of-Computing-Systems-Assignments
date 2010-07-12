@@ -66,20 +66,20 @@ class CodeWriter:
                 self.outputFile.write("D=A\n")
                 self.push()
             if segment == "argument":
-                self.pushFromRAM("ARG", index)
+                self.preambleLocationInMemory("ARG")
+                self.pushFromRAM(index)
             if segment == "local":
-                self.pushFromRAM("LCL", index)
+                self.preambleLocationInMemory("LCL")
+                self.pushFromRAM(index)
             if segment == "this":
-                self.pushFromRAM("THIS", index)
+                self.preambleLocationInMemory("THIS")
+                self.pushFromRAM(index)
             if segment == "that":
-                self.pushFromRAM("THAT", index)
+                self.preambleLocationInMemory("THAT")
+                self.pushFromRAM(index)
             if segment == "temp":
-                self.outputFile.write("@5\n")
-                self.outputFile.write("D=A\n")
-                self.outputFile.write("@" + index + "\n")
-                self.outputFile.write("A=D+A\n")
-                self.outputFile.write("D=M\n")
-                self.push()
+                self.preambleLocationIsMemory("5")
+                self.pushFromRAM(index)
         if command == Parser.C_POP:
             if segment == "argument":
                 self.preambleLocationInMemory("ARG")
@@ -112,9 +112,7 @@ class CodeWriter:
         self.outputFile.write("A=M\n")
         self.outputFile.write("D=M\n")
     
-    def pushFromRAM(self, segmentVar, index):
-        self.outputFile.write("@" + segmentVar + "\n")
-        self.outputFile.write("D=M\n")
+    def pushFromRAM(self, index):
         self.outputFile.write("@" + index + "\n")
         self.outputFile.write("A=D+A\n")
         self.outputFile.write("D=M\n")
