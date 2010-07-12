@@ -22,10 +22,10 @@ def translate(fileName):
 
     
     codeWriter = CodeWriter(outputFile)
-    for file in files:
-        file = open(file, 'r')
+    for currentFile in files:
+        file = open(currentFile, 'r')
         parser = Parser(file)
-        parse(parser, codeWriter, file)
+        parse(parser, codeWriter, os.path.basename(currentFile))
     codeWriter.close() 
 
 

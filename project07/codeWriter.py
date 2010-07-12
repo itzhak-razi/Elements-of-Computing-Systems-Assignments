@@ -83,6 +83,10 @@ class CodeWriter:
             elif segment == "pointer":
                 self.preambleLocationIsMemory("3")
                 self.pushFromRAM(index)
+            elif segment == "static":
+                self.outputFile.write("@" + self.currentName + "." + str(index) + "\n")
+                self.outputFile.write("D=M\n")
+                self.push()
             else:
                 print("ERROR: segment undefined, segment given - " + segment)
         elif command == Parser.C_POP:
@@ -104,6 +108,10 @@ class CodeWriter:
             elif segment == "pointer":
                 self.preambleLocationIsMemory("3")
                 self.storeToRAM(index)
+            elif segment == "static":
+                self.pop()
+                self.outputFile.write("@" + self.currentName + "." + str(index) + "\n")
+                self.outputFile.write("M=D\n")
             else:
                 print("ERROR: segment undefined, segment given - " + segment)
 
