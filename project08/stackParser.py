@@ -47,6 +47,14 @@ class Parser:
             return Parser.C_LABEL
         elif re.match("if-goto", self.current()):
             return Parser.C_IF
+        elif re.match("goto", self.current()):
+            return Parser.C_GOTO
+        elif re.match("function", self.current()):
+            return Parser.C_FUNCTION
+        elif re.match("call", self.current()):
+            return Parser.C_CALL
+        elif re.match("return", self.current()):
+            return Parser.C_RETURN
 
 
 
