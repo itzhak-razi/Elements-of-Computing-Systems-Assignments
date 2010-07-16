@@ -195,9 +195,7 @@ class CodeWriter:
         self.outputFile.write("0;JMP\n")
 
     def writeIf(self, label):
-        self.outputFile.write("@SP\n")
-        self.outputFile.write("A=M-1\n")
-        self.outputFile.write("D=M\n")
+        self.pop()
         self.outputFile.write("@" + self.labelName(label) + "\n")
         self.outputFile.write("D;JNE\n")
 
