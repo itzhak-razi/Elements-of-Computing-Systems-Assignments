@@ -3,6 +3,7 @@ class CodeWriter:
     def __init__(self, fileOut):
         self.outputFile = fileOut
         self.labelCounter = 0
+        self.currentFunction = ""
 
     def setFileName(self, fileName):
         self.currentName = fileName
@@ -186,25 +187,34 @@ class CodeWriter:
     def close(self):
         self.outputFile.close()
 
-    def writeGoto(label):
-        pass
+    def writeLabel(self, label):
+        self.outputFile.write("(" + self.labelName(label) + ")\n")
 
-    def writeIf(label):
-        pass
+    def writeGoto(self, label):
+        self.outputFile.write("@" + self.labelName(label) + "\n")
+        self.outputFile.write("0;JMP\n")
 
-    def writeInit():
+    def writeIf(self, label):
+        self.outputFile.write("@SP\n")
+        self.outputFile.write("A=M-1\n")
+        self.outputFile.write("D=M\n")
+        self.outputFile.write("@" + self.labelName(label) + "\n")
+        self.outputFile.write("D;JNE\n")
+
+    def writeInit(self):
         pass
     
-    def writeLabel(label):
+
+    def writeCall(self, functionName, numArgs):
         pass
 
-    def writeCall(functionName, numArgs):
-        pass
+    def writeFunction(self, functionName, numLocals):
+        self.currentFunction = functionName 
 
-    def writeFunction(functionName, numLocals):
-        pass
+    def writeReturn(self):
+        self.currentFunction = ""
 
-    def writeReturn():
-        pass
-
+    
+    def labelName(self, label):
+        return self.currentFunction + "$" + label
 

@@ -43,6 +43,10 @@ class Parser:
             return Parser.C_PUSH
         elif re.match("pop", self.current()):
             return Parser.C_POP
+        elif re.match("label", self.current()):
+            return Parser.C_LABEL
+        elif re.match("if-goto", self.current()):
+            return Parser.C_IF
 
 
 

@@ -53,4 +53,5 @@ def parse(parser, codeWriter, fileName):
             codeWriter.writeFunction(parser.arg1(), parser.arg2())
         else:
             print("Unhandled command type, type is " + str(parser.commandType()))
+            print("\tCommand is " + parser.current())
 
