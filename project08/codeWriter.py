@@ -273,7 +273,51 @@ class CodeWriter:
 
     def writeReturn(self):
         self.currentFunction = ""
-    
+        self.outputFile.write("@LCL\n")
+        self.outputFile.write("D=M\n")
+        self.outputFile.write("@R13\n") #R13 = FRAME
+        self.outputFile.write("M=D\n")
+        self.outputFile.write("@R14\n") #R14 = RET
+        self.outputFile.write("M=D\n")
+        self.outputFile.write("@5\n")
+        self.outputFile.write("D=A\n")
+        self.outputFile.write("@R14\n")
+        self.outputFile.write("M=M-D\n")
+        self.pop()
+        self.outputFile.write("@ARG\n")
+        self.outputFile.write("A=M\n")
+        self.outputFile.write("M=D\n")
+        self.outputFile.write("@ARG\n")
+        self.outputFile.write("D=M\n")
+        self.outputFile.write("@SP\n")
+        self.outputFile.write("M=D+1\n")
+        self.outputFile.write("@R13")
+        self.outputFile.write("M=M-1\n")
+        self.outputFile.write("A=M\n")
+        self.outputFile.write("D=M\n")
+        self.outputFile.write("@THAT\n")
+        self.outputFile.write("M=D\n")
+        self.outputFile.write("@R13\n")
+        self.outputFile.write("M=M-1\n")
+        self.outputFile.write("A=M\n")
+        self.outputFile.write("D=M\n")
+        self.outputFile.write("@THIS\n")
+        self.outputFile.write("M=D\n")
+        self.outputFile.write("@R13\n")
+        self.outputFile.write("M=M-1\n")
+        self.outputFile.write("A=M\n")
+        self.outputFile.write("D=M\n")
+        self.outputFile.write("@ARG\n")
+        self.outputFile.write("M=D\n")
+        self.outputFile.write("@R13\n")
+        self.outputFile.write("M=M-1\n")
+        self.outputFile.write("A=M\n")
+        self.outputFile.write("D=M\n")
+        self.outputFile.write("@LCL\n")
+        self.outputFile.write("M=D\n")
+        self.outputFile.write("@R14\n")
+        self.outputFile.write("0;JMP\n")
+
     def labelName(self, label):
         return self.currentFunction + "$" + label
 
