@@ -64,10 +64,10 @@ class Parser:
             raise TypeError("Trying to get the first argument on a return command")
 
         if self.commandType() == Parser.C_ARITHMETIC:
-            result=re.match("\w+", self.current())
+            result=re.match("\S+", self.current())
             return result.group(0)
         else:
-            result = re.search("\w+\s+(\w+)", self.current())
+            result = re.search("\S+\s+(\S+)", self.current())
             return result.group(1)
              
     def arg2(self):
@@ -76,5 +76,5 @@ class Parser:
         if type != Parser.C_PUSH and type != Parser.C_POP and type != Parser.C_FUNCTION and type != Parser.C_CALL:
            raise TypeError("Cannot get the second argument for this command")
 
-        result = re.search("\w+\s+\w+\s+(\w+)", self.current())
+        result = re.search("\S+\s+\S+\s+(\S+)", self.current())
         return result.group(1)
