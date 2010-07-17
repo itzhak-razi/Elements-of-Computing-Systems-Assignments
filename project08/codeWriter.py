@@ -200,8 +200,11 @@ class CodeWriter:
         self.outputFile.write("D;JNE\n")
 
     def writeInit(self):
-        pass
-    
+        self.outputFile.write("@256\n")
+        self.outputFile.write("D=A\n")
+        self.outputFile.write("@SP\n")  
+        self.outputFile.write("M=D\n")
+        self.writeCall("Sys.init", 0)
 
     def writeCall(self, functionName, numArgs):
         pass
