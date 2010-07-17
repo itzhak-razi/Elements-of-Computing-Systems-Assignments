@@ -38,7 +38,7 @@ class CodeWriter:
             self.pop()
             self.outputFile.write("@SP\n")
             self.outputFile.write("A=M\n")
-            self.outputFile.write("M=!D")
+            self.outputFile.write("M=!D\n")
         elif command == "eq":
             label = "negate" + str(self.labelCounter)
             self.labelCounter += 1
@@ -241,35 +241,18 @@ class CodeWriter:
         self.outputFile.write("@" + functionName + "\n")
         self.outputFile.write("0;JMP\n")
         self.outputFile.write("(return" + self.currentFunction + str(self.returnNum) + ")\n")
+        self.returnNum += 1
 
 
     def writeFunction(self, functionName, numLocals):
         self.currentFunction = functionName
         self.returnNum = 0
-        self.outputFile.write("(" + functionName +")\n")
-        self.outputFile.write("@R13\n")
-        self.outputFile.write("M=0\n")
-        self.outputFile.write("(" + functionName +"loopStart)\n")
-        self.outputFile.write("@" + str(numLocals) + "\n")
-        self.outputFile.write("D=A\n")
-        self.outputFile.write("@R13\n")
-        self.outputFile.write("D=A-M\n")
-        self.outputFile.write("@" + functionName + "loopEnd\n")
-        self.outputFile.write("D;JLE\n")
-        #push 0
-        self.outputFile.write("@SP\n")
-        self.outputFile.write("A=M\n")
-        self.outputFile.write("M=0\n")
-        self.outputFile.write("@SP\n")
-        self.outputFile.write("M=M+1\n")
-        #increment counter and goto start of loop
-        self.outputFile.write("@R13\n")
-        self.outputFile.write("M=M+1\n")
-        self.outputFile.write("@" + functionName + "loopStart\n")
-        self.outputFile.write("0;JMP\n")
-        self.outputFile.write("(" + functionName + "loopEnd)\n")
-
-
+        for i in numLocals:
+            self.outputFile.write("@SP\n")
+            self.outputFile.write("A=M\n")
+            self.outputFile.write("M=0\n")
+            self.outputFile.write("@SP\n")
+            self.outputFile.write("M=M+1\n")
 
     def writeReturn(self):
         self.currentFunction = ""
@@ -291,7 +274,7 @@ class CodeWriter:
         self.outputFile.write("D=M\n")
         self.outputFile.write("@SP\n")
         self.outputFile.write("M=D+1\n")
-        self.outputFile.write("@R13")
+        self.outputFile.write("@R13\n")
         self.outputFile.write("M=M-1\n")
         self.outputFile.write("A=M\n")
         self.outputFile.write("D=M\n")
