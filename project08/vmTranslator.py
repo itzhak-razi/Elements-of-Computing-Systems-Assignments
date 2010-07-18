@@ -22,6 +22,7 @@ def translate(fileName):
 
     
     codeWriter = CodeWriter(outputFile)
+    #codeWriter.writeInit()
     for currentFile in files:
         file = open(currentFile, 'r')
         parser = Parser(file)
@@ -46,11 +47,11 @@ def parse(parser, codeWriter, fileName):
         elif parser.commandType() == Parser.C_IF:
             codeWriter.writeIf(parser.arg1())
         elif parser.commandType() == Parser.C_CALL:
-            codeWriter.writeCall(parser.arg1(), parser.arg2())
+            codeWriter.writeCall(parser.arg1(), int(parser.arg2()))
         elif parser.commandType() == Parser.C_RETURN:
             codeWriter.writeReturn()
         elif parser.commandType() == Parser.C_FUNCTION:
-            codeWriter.writeFunction(parser.arg1(), parser.arg2())
+            codeWriter.writeFunction(parser.arg1(), int(parser.arg2()))
         else:
             print("Unhandled command type, type is " + str(parser.commandType()))
             print("\tCommand is " + parser.current())

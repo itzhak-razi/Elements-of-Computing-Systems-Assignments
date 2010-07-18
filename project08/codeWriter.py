@@ -247,7 +247,7 @@ class CodeWriter:
     def writeFunction(self, functionName, numLocals):
         self.currentFunction = functionName
         self.returnNum = 0
-        for i in numLocals:
+        for i in range(numLocals):
             self.outputFile.write("@SP\n")
             self.outputFile.write("A=M\n")
             self.outputFile.write("M=0\n")
@@ -266,6 +266,10 @@ class CodeWriter:
         self.outputFile.write("D=A\n")
         self.outputFile.write("@R14\n")
         self.outputFile.write("M=M-D\n")
+        self.outputFile.write("A=M\n")
+        self.outputFile.write("D=M\n")
+        self.outputFile.write("@R14\n")
+        self.outputFile.write("M=D\n")
         self.pop()
         self.outputFile.write("@ARG\n")
         self.outputFile.write("A=M\n")
@@ -299,6 +303,7 @@ class CodeWriter:
         self.outputFile.write("@LCL\n")
         self.outputFile.write("M=D\n")
         self.outputFile.write("@R14\n")
+        self.outputFile.write("A=M\n")
         self.outputFile.write("0;JMP\n")
 
     def labelName(self, label):
