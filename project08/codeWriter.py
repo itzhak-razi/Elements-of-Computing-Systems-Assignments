@@ -35,10 +35,9 @@ class CodeWriter:
             self.outputFile.write("A=M-1\n")
             self.outputFile.write("M=M | D\n")
         elif command == "not":
-            self.pop()
             self.outputFile.write("@SP\n")
-            self.outputFile.write("A=M\n")
-            self.outputFile.write("M=!D\n")
+            self.outputFile.write("A=M-1\n")
+            self.outputFile.write("M=!M\n")
         elif command == "eq":
             label = "negate" + str(self.labelCounter)
             self.labelCounter += 1
