@@ -207,6 +207,7 @@ class CodeWriter:
         self.writeCall("Sys.init", 0)
 
     def writeCall(self, functionName, numArgs):
+        print("currentFunction is " + self.currentFunction)
         self.outputFile.write("@return" + self.currentFunction + str(self.returnNum) + "\n")
         self.outputFile.write("D=A\n")
         self.push()
@@ -237,6 +238,7 @@ class CodeWriter:
         self.outputFile.write("@SP\n")
         self.outputFile.write("D=M\n")
         self.outputFile.write("@LCL\n")
+        self.outputFile.write("M=D\n")
         self.outputFile.write("@" + functionName + "\n")
         self.outputFile.write("0;JMP\n")
         self.outputFile.write("(return" + self.currentFunction + str(self.returnNum) + ")\n")
@@ -245,7 +247,9 @@ class CodeWriter:
 
     def writeFunction(self, functionName, numLocals):
         self.currentFunction = functionName
+        print("Function name is " + self.currentFunction)
         self.returnNum = 0
+        self.outputFile.write("(" + functionName + ")\n")
         for i in range(numLocals):
             self.outputFile.write("@SP\n")
             self.outputFile.write("A=M\n")
@@ -254,7 +258,6 @@ class CodeWriter:
             self.outputFile.write("M=M+1\n")
 
     def writeReturn(self):
-        self.currentFunction = ""
         self.outputFile.write("@LCL\n")
         self.outputFile.write("D=M\n")
         self.outputFile.write("@R13\n") #R13 = FRAME

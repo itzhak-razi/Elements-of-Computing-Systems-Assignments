@@ -22,7 +22,7 @@ def translate(fileName):
 
     
     codeWriter = CodeWriter(outputFile)
-    #codeWriter.writeInit()
+    codeWriter.writeInit()
     for currentFile in files:
         file = open(currentFile, 'r')
         parser = Parser(file)
@@ -36,6 +36,7 @@ def parse(parser, codeWriter, fileName):
     codeWriter.setFileName(fileName)
     while parser.hasMoreCommands():
         parser.advance()
+        print("Command is " + parser.current() + " type is " + str(parser.commandType()))
         if parser.commandType() == Parser.C_ARITHMETIC:
             codeWriter.writeArithmetic(parser.arg1())
         elif (parser.commandType() == Parser.C_PUSH) | (parser.commandType() == Parser.C_POP):

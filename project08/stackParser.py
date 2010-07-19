@@ -18,7 +18,7 @@ class Parser:
         lines = file.splitlines()
         self.commands = []
         while len(lines) > 0:
-            current = lines.pop(0)
+            current = re.search("[^/]*", lines.pop(0)).group(0)
             stripped = current.strip()
             if not(re.match("//", stripped) or len(stripped) == 0):
                 self.commands.append(stripped)
