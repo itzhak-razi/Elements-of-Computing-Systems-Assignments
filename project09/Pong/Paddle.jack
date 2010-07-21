@@ -1,0 +1,22 @@
+class LeftPaddle
+{
+    field int y;
+    field int x;
+
+    constructor Paddle new(int yPos, int xPos)
+    {
+        let y = yPos;
+        x = xPos;
+
+        do draw();
+        return this;
+    }
+
+    method void draw()
+    {
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x, y, 
+    }
+
+    
+}
