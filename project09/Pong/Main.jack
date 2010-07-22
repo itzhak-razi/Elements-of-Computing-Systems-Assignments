@@ -3,7 +3,7 @@ class Main
     function void main()
     {
         var Paddle paddle;
-        let paddle = Paddle.new(0, 0, 30, 50);
+        let paddle = Paddle.new(10, 150, 10, 50);
         return;
     }
 }

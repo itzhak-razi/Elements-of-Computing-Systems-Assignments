@@ -1,12 +1,16 @@
-class LeftPaddle
+class Paddle
 {
     field int y;
     field int x;
+    field int width;
+    field int height;
 
-    constructor Paddle new(int yPos, int xPos)
+    constructor Paddle new(int xPos, int yPos, int widthSize, int heightSize)
     {
         let y = yPos;
-        x = xPos;
+        let x = xPos;
+        let width = widthSize;
+        let height = heightSize;
 
         do draw();
         return this;
@@ -15,8 +19,18 @@ class LeftPaddle
     method void draw()
     {
         do Screen.setColor(true);
-        do Screen.drawRectangle(x, y, 
+        do Screen.drawRectangle(x, y, x + width, y + height);
+        return;
     }
 
-    
+    method void moveUp()
+    {
+        do Screen.setColor(false);
+        return;
+    }
+
+    method void moveDown()
+    {
+        return;
+    }
 }
