@@ -3,7 +3,19 @@ class Main
     function void main()
     {
         var Paddle paddle;
+        var boolean exit;
+        var char key;
         let paddle = Paddle.new(10, 150, 10, 50);
+        let exit = false;
+
+        while(~exit)
+        {
+            let key = Keyboard.keyPressed();
+            if(key = 131)
+            {
+                do paddle.moveUp();
+            }
+        }
         return;
     }
 }

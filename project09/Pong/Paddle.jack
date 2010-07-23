@@ -26,6 +26,10 @@ class Paddle
     method void moveUp()
     {
         do Screen.setColor(false);
+        do Screen.drawRectangle(x, y + height - 1, x + width, y + height);
+        do Screen.setColor(true);
+        let y = y - 1;
+        do Screen.drawRectangle(x, y - 1, x + width, y + height - 1);
         return;
     }
 
