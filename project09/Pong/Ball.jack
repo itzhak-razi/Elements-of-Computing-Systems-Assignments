@@ -1,0 +1,7 @@
+class Ball
+{
+    field int x;
+    field int y;
+    field int radius;
+    
+}

@@ -2,10 +2,13 @@ class Main
 {
     function void main()
     {
-        var Paddle paddle;
+        var Paddle leftPaddle;
+        var Paddle rightPaddle;
         var boolean exit;
         var char key;
-        let paddle = Paddle.new(10, 150, 10, 50);
+        var int direction;
+        let leftPaddle = Paddle.new(10, 150, 10, 50);
+        let rightPaddle = Paddle.new(490, 150, 10, 50);
         let exit = false;
 
         while(~exit)
@@ -13,8 +16,21 @@ class Main
             let key = Keyboard.keyPressed();
             if(key = 131)
             {
-                do paddle.moveUp();
+                do leftPaddle.moveUp();
             }
+            if(key = 65)
+            {
+                do rightPaddle.moveUp();
+            }
+            if(key = 133)
+            {
+                do leftPaddle.moveDown();
+            }
+            if(key = 83)
+            {
+                do rightPaddle.moveDown();
+            }
+            do Sys.wait(5);
         }
         return;
     }
