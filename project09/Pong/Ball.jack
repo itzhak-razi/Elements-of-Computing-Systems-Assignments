@@ -11,7 +11,7 @@ class Ball
         let x = xPos;
         let y = yPos;
         let radius = r;
-        let direction = -1;
+        let direction = -5;
 
         do draw();
         return this;
@@ -26,11 +26,11 @@ class Ball
 
     method void moveOne()
     {
-        if(x + radius > 511)
+        if(x + radius + direction > 511)
         {
             let direction = - direction;
         }
-        if(x - radius < 1)
+        if(x - radius + direction < 1)
         {
             let direction = - direction;
         }
