@@ -3,5 +3,41 @@ class Ball
     field int x;
     field int y;
     field int radius;
-    
+    field int direction;
+    field int angle;
+
+    constructor Ball new(int xPos, int yPos, int r)
+    {
+        let x = xPos;
+        let y = yPos;
+        let radius = r;
+        let direction = -1;
+
+        do draw();
+        return this;
+    }
+
+    method void draw()
+    {
+        do Screen.setColor(true);
+        do Screen.drawCircle(x, y, radius);
+        return;
+    }
+
+    method void moveOne()
+    {
+        if(x + radius > 511)
+        {
+            let direction = - direction;
+        }
+        if(x - radius < 1)
+        {
+            let direction = - direction;
+        }
+        do Screen.setColor(false);
+        do Screen.drawCircle(x, y, radius);
+        let x = x + direction;
+        do draw();
+        return;
+    }
 }
