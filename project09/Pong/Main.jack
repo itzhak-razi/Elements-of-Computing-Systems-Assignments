@@ -8,7 +8,7 @@ class Main
         var boolean exit;
         var char key;
         var int direction;
-        let ball = Ball.new(256, 128, 5);
+        let ball = Ball.new(5, -5);
         let leftPaddle = Paddle.new(10, 128, 10, 50);
         let rightPaddle = Paddle.new(490, 128, 10, 50);
         let exit = false;

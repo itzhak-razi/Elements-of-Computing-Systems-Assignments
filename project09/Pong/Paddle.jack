@@ -48,4 +48,19 @@ class Paddle
         }
         return;
     }
+
+    method int getX()
+    {
+        return x;
+    }
+
+    method int getTopY()
+    {
+        return y;
+    }
+
+    method int getBottomY()
+    {
+        return y + height;
+    }
 }
