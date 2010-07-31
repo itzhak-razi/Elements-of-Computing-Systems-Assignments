@@ -40,15 +40,17 @@ class Main
             let bottomCircle = ball[1] - ball[2]; //y - radius
             //ball[0] x, ball[3] - direction, ball[2] radius
             //paddle[0] x, paddle[2] width
-            if((ball[0] + ball[3] - ball[2]) < (leftPaddle[0] + leftPaddle[2])) 
-            {
-                do ball.switchVelocity();
-            }
-            //don't need to add width to right paddle because its x point is what will encounter the ball first
             if(((ball[0] + ball[3] + ball[2]) > rightPaddle[0]) & 
                 (((topCircle < rightPaddle.getBottomY()) & (topCircle > rightPaddle.getTopY())) | 
                 ((bottomCircle > rightPaddle.getTopY()) & (bottomCircle < rightPaddle.getBottomY() ))))
 
+            {
+                do ball.switchVelocity();
+            }
+                
+            if(((ball[0] + ball[3] - ball[2]) < (leftPaddle[0] + leftPaddle[2])) &
+                (((topCircle < rightPaddle.getBottomY()) & (topCircle > rightPaddle.getTopY())) | 
+                ((bottomCircle > rightPaddle.getTopY()) & (bottomCircle < rightPaddle.getBottomY() ))))
             {
                 do ball.switchVelocity();
             }
@@ -58,13 +60,4 @@ class Main
         return;
     }
 
-    /**method boolean inYRange(int topY, int bottomY)
-    {
-
-        if(((topCircle < bottomY) & (topCircle > topY)) | ((bottomCircle > topY) & (bottomCircle < bottomY)))
-        {
-            return true;
-        }
-        return false;
-    }*/
 }
