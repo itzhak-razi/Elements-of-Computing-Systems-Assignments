@@ -45,7 +45,10 @@ class Main
                 do ball.switchVelocity();
             }
             //don't need to add width to right paddle because its x point is what will encounter the ball first
-            if(((ball[0] + ball[3] + ball[2]) > rightPaddle[0]) & ((topCircle < rightPaddle.getBottomY()) & (topCircle > rightPaddle.getTopY())))
+            if(((ball[0] + ball[3] + ball[2]) > rightPaddle[0]) & 
+                (((topCircle < rightPaddle.getBottomY()) & (topCircle > rightPaddle.getTopY())) | 
+                ((bottomCircle > rightPaddle.getTopY()) & (bottomCircle < rightPaddle.getBottomY() ))))
+
             {
                 do ball.switchVelocity();
             }
