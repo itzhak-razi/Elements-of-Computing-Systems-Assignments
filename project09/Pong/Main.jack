@@ -8,6 +8,9 @@ class Main
         var boolean exit;
         var char key;
         var int direction;
+        var int topCircle;
+        var int bottomCircle;
+
         let ball = Ball.new(5, -5);
         let leftPaddle = Paddle.new(10, 128, 10, 50);
         let rightPaddle = Paddle.new(490, 128, 10, 50);
@@ -32,9 +35,33 @@ class Main
             {
                 do rightPaddle.moveDown();
             }
+
+            let topCircle = ball[1] + ball[2]; //y + radius
+            let bottomCircle = ball[1] - ball[2]; //y - radius
+            //ball[0] x, ball[3] - direction, ball[2] radius
+            //paddle[0] x, paddle[2] width
+            if((ball[0] + ball[3] - ball[2]) < (leftPaddle[0] + leftPaddle[2])) 
+            {
+                do ball.switchVelocity();
+            }
+            //don't need to add width to right paddle because its x point is what will encounter the ball first
+            if(((ball[0] + ball[3] + ball[2]) > rightPaddle[0]) & ((topCircle < rightPaddle.getBottomY()) & (topCircle > rightPaddle.getTopY())))
+            {
+                do ball.switchVelocity();
+            }
             do ball.moveOne();
             do Sys.wait(5);
         }
         return;
     }
+
+    /**method boolean inYRange(int topY, int bottomY)
+    {
+
+        if(((topCircle < bottomY) & (topCircle > topY)) | ((bottomCircle > topY) & (bottomCircle < bottomY)))
+        {
+            return true;
+        }
+        return false;
+    }*/
 }

@@ -1,7 +1,7 @@
 class Paddle
 {
-    field int y;
     field int x;
+    field int y;
     field int width;
     field int height;
 

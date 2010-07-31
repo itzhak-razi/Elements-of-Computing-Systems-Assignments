@@ -47,17 +47,9 @@ class Ball
         return;
     }
 
-    method boolean inYRange(int topY, int bottomY)
+    method void switchVelocity()
     {
-        var int topCircle;
-        var int bottomCircle;
-
-        let topCircle = y + radius;
-        let bottomCircle = y - radius;
-        if(((topCircle < bottomY) & (topCircle > topY)) | ((bottomCircle > topY) & (bottomCircle < bottomY)))
-        {
-            return true;
-        }
-        return false;
+        let direction = -direction;
+        return;
     }
 }
