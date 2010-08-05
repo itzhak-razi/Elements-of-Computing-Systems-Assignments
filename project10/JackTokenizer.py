@@ -14,23 +14,42 @@ class JackTokenizer:
        fileContents = inputFile.read()
        currentIndex = 0
        commentsRemoved = ""
-       while currentIndex < len(fileContents):
-           index = fileContents.find("\"", currentIndex)
-           if index < fileContents.find("/"):
-               currentIndex = fileContents.find("\"", index + 1)
+       quoteMode = False
+
+       #Loop to strip comments
+       while currentIndex < len(fileContents) - 1:
+           if fileContents[currentIndex] == "\"":
+              quoteMode = not quoteMode
+              commentsRemoved += fileContents[currentIndex]
+              currentIndex += 1
+           elif (not quoteMode) and fileContents[currentIndex] == "/" and fileContents[currentIndex + 1] == "/": 
+               currentIndex = fileContents.find("\n", currentIndex + 1)
+           elif (not quoteMode) and fileContents[currentIndex] == "/" and fileContents[currentIndex + 1] == "*":
+               currentIndex = fileContents.find("*/", currentIndex + 1) + 2
            else:
-               currentIndex = fileContents.find("/")
-            
-           if currentIndex + 1 == "*":
+               commentsRemoved += fileContents[currentIndex]
+               currentIndex += 1
+       commentsRemoved += fileContents[currentIndex]
+    
+       print("With comments removed\n\n" + commentsRemoved)
 
 
+           
+    
 
     def hasMoreTokens(self):
         pass
     def advance(self):
+        pass
     def tokenType(self):
+        pass
     def keyWord(self):
+        pass
     def symbol(self):
+        pass
     def identifier(self):
+        pass
     def intVal(self):
+        pass
     def stringVal(self):
+        pass
