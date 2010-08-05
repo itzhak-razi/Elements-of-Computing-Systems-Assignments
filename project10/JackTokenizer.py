@@ -12,7 +12,16 @@ class JackTokenizer:
     def __init__(self, inputFile):
        import re
        fileContents = inputFile.read()
-       re.split("\s+", fileContents)
+       currentIndex = 0
+       commentsRemoved = ""
+       while currentIndex < len(fileContents):
+           index = fileContents.find("\"", currentIndex)
+           if index < fileContents.find("/"):
+               currentIndex = fileContents.find("\"", index + 1)
+           else:
+               currentIndex = fileContents.find("/")
+            
+           if currentIndex + 1 == "*":
 
 
 
