@@ -11,30 +11,29 @@ class JackTokenizer:
 
 
     def __init__(self, inputFile):
-       import re
-       fileContents = inputFile.read()
-       currentIndex = 0
-       commentsRemoved = ""
-       quoteMode = False
-       self.currentToken = ""
+        import re
+        fileContents = inputFile.read()
+        currentIndex = 0
+        commentsRemoved = ""
+        quoteMode = False
+        self.currentToken = ""
 
-       #Loop to strip comments
-       while currentIndex < len(fileContents) - 1:
-           if fileContents[currentIndex] == "\"":
-              quoteMode = not quoteMode
-              commentsRemoved += fileContents[currentIndex]
-              currentIndex += 1
-           elif (not quoteMode) and fileContents[currentIndex] == "/" and fileContents[currentIndex + 1] == "/": 
-               currentIndex = fileContents.find("\n", currentIndex + 1)
-           elif (not quoteMode) and fileContents[currentIndex] == "/" and fileContents[currentIndex + 1] == "*":
-               currentIndex = fileContents.find("*/", currentIndex + 1) + 2
-           else:
-               commentsRemoved += fileContents[currentIndex]
-               currentIndex += 1
-       commentsRemoved += fileContents[currentIndex]
+        #Loop to strip comments
+        while currentIndex < len(fileContents) - 1:
+            if fileContents[currentIndex] == "\"":
+                quoteMode = not quoteMode
+                commentsRemoved += fileContents[currentIndex]
+                currentIndex += 1
+            elif (not quoteMode) and fileContents[currentIndex] == "/" and fileContents[currentIndex + 1] == "/": 
+                currentIndex = fileContents.find("\n", currentIndex + 1)
+            elif (not quoteMode) and fileContents[currentIndex] == "/" and fileContents[currentIndex + 1] == "*":
+                currentIndex = fileContents.find("*/", currentIndex + 1) + 2
+            else:
+                commentsRemoved += fileContents[currentIndex]
+                currentIndex += 1
+        commentsRemoved += fileContents[currentIndex]
         
-       self.spaceSplit = re.split("\s+", commentsRemoved)
-
+       
 
     def hasMoreTokens(self):
         if len(self.spaceSplit) > 0:
@@ -58,7 +57,7 @@ class JackTokenizer:
 
 
     def tokenType(self):
-        pass
+
 
     def keyWord(self):
         pass
