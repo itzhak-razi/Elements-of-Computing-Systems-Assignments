@@ -6,6 +6,7 @@ class JackTokenizer:
 
     SYMBOLS = ['{', '}', '(', ')', '[', ']', '.', ',', ';', '+', '-', '*', '/', '&', '|', '<',
                 '>', '=', '~']    
+
     
 
 
@@ -15,6 +16,7 @@ class JackTokenizer:
        currentIndex = 0
        commentsRemoved = ""
        quoteMode = False
+       self.currentToken = ""
 
        #Loop to strip comments
        while currentIndex < len(fileContents) - 1:
@@ -30,26 +32,48 @@ class JackTokenizer:
                commentsRemoved += fileContents[currentIndex]
                currentIndex += 1
        commentsRemoved += fileContents[currentIndex]
-    
-       print("With comments removed\n\n" + commentsRemoved)
+        
+       self.spaceSplit = re.split("\s+", commentsRemoved)
 
-
-           
-    
 
     def hasMoreTokens(self):
-        pass
+        if len(self.spaceSplit) > 0:
+            return True
+        return False 
+
     def advance(self):
-        pass
+        self.currentToken = self.spaceSplit.pop(0)
+        for currentSymbol in SYMBOLS:
+            if(re.match(currentSymbol, self.currentToken) and 
+               len(currentSymbol) < len(self.currentToken)):
+                self.spaceSplit.insert(0, self.currentToken[len(currentSymbol):])
+                self.currentToken = currentSymbol
+
+        for currentKeyword in KEYWORDS:
+            if(re.match(currentKeyword, self.currentToken) and
+               len(currentKeyword) < len(self.currentToken)):
+                self.spaceSplit.insert(0, self.currentToken[len(currentKeyword):])
+                self.currentToken = currentKeyword 
+
+
+
     def tokenType(self):
         pass
+
     def keyWord(self):
         pass
+
     def symbol(self):
         pass
+
     def identifier(self):
         pass
+
     def intVal(self):
         pass
+
     def stringVal(self):
         pass
+
+    def current(self):
+        return self.currentToken
