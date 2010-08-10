@@ -61,7 +61,6 @@ class JackTokenizer:
 
         #match keywords
         if self.commentsRemoved[self.tokenIndex].isalpha():
-            print("Attempting alpha match")
             for currentKeyword in JackTokenizer.KEYWORDS:
                 if re.match(currentKeyword, self.commentsRemoved[self.tokenIndex:]):
                     self.currentToken = currentKeyword
@@ -71,7 +70,6 @@ class JackTokenizer:
                     break
         #match string constants 
         if not matched and self.commentsRemoved[self.tokenIndex] == "\"":
-            print("Attempting str constants match")
             quoteGroup = re.match("\"[^\"]*\"", self.commentsRemoved[self.tokenIndex:])
             self.currentToken = quoteGroup.group(0)
             self.tokenIndex += len(self.currentToken)
@@ -79,7 +77,6 @@ class JackTokenizer:
             matched = True
         #match symbols
         if (not matched) and (not self.commentsRemoved[self.tokenIndex].isdigit()):
-            print("Attempting symbols match")
             for currentSymbol in JackTokenizer.SYMBOLS:
                 if currentSymbol == self.commentsRemoved[self.tokenIndex]:
                     self.tokenIndex += 1
@@ -89,7 +86,6 @@ class JackTokenizer:
                     break
         #match integer constants
         if not matched and self.commentsRemoved[self.tokenIndex].isdigit():
-            print("Attempting int constants match")
             numGroup = re.match("\d+", self.commentsRemoved[self.tokenIndex:])
             self.currentToken = numGroup.group(0)
             self.tokenIndex += len(self.currentToken)
@@ -97,7 +93,6 @@ class JackTokenizer:
             matched = True
         #match identifier
         if not matched:
-            print("Attempting identifier match")
             identifierMatch = re.match("[a-zA-Z_]+[a-zA-Z0-9_]*", self.commentsRemoved[self.tokenIndex:])
             self.currentToken = identifierMatch.group(0)
             self.tokenIndex += len(self.currentToken)
