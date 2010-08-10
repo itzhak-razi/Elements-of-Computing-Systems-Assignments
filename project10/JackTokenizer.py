@@ -70,7 +70,7 @@ class JackTokenizer:
                     matched = True
                     break
         #match string constants 
-        if self.commentsRemoved[self.tokenIndex] == "\"" and not matched:
+        if not matched and self.commentsRemoved[self.tokenIndex] == "\"":
             print("Attempting str constants match")
             quoteGroup = re.match("\"[^\"]*\"", self.commentsRemoved[self.tokenIndex:])
             self.currentToken = quoteGroup.group(0)
@@ -78,7 +78,7 @@ class JackTokenizer:
             self.type = JackTokenizer.STRING_CONST
             matched = True
         #match symbols
-        if (not self.commentsRemoved[self.tokenIndex].isdigit()) and (not matched):
+        if (not matched) and (not self.commentsRemoved[self.tokenIndex].isdigit()):
             print("Attempting symbols match")
             for currentSymbol in JackTokenizer.SYMBOLS:
                 if currentSymbol == self.commentsRemoved[self.tokenIndex]:
@@ -86,8 +86,9 @@ class JackTokenizer:
                     self.type = JackTokenizer.SYMBOL
                     self.currentToken = currentSymbol
                     matched = True
+                    break
         #match integer constants
-        if self.commentsRemoved[self.tokenIndex].isdigit() and not matched:
+        if not matched and self.commentsRemoved[self.tokenIndex].isdigit():
             print("Attempting int constants match")
             numGroup = re.match("\d+", self.commentsRemoved[self.tokenIndex:])
             self.currentToken = numGroup.group(0)
