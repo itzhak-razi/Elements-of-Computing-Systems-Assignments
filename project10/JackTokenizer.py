@@ -65,7 +65,7 @@ class JackTokenizer:
                 if re.match(currentKeyword, self.commentsRemoved[self.tokenIndex:]):
                     self.currentToken = currentKeyword
                     self.tokenIndex += len(currentKeyword)
-                    self.type = JackTokenizer.KEYWORD
+                    self.tokenType = JackTokenizer.KEYWORD
                     matched = True
                     break
         #match string constants 
@@ -73,14 +73,14 @@ class JackTokenizer:
             quoteGroup = re.match("\"[^\"]*\"", self.commentsRemoved[self.tokenIndex:])
             self.currentToken = quoteGroup.group(0)
             self.tokenIndex += len(self.currentToken)
-            self.type = JackTokenizer.STRING_CONST
+            self.tokenType = JackTokenizer.STRING_CONST
             matched = True
         #match symbols
         if (not matched) and (not self.commentsRemoved[self.tokenIndex].isdigit()):
             for currentSymbol in JackTokenizer.SYMBOLS:
                 if currentSymbol == self.commentsRemoved[self.tokenIndex]:
                     self.tokenIndex += 1
-                    self.type = JackTokenizer.SYMBOL
+                    self.tokenType = JackTokenizer.SYMBOL
                     self.currentToken = currentSymbol
                     matched = True
                     break
@@ -89,17 +89,14 @@ class JackTokenizer:
             numGroup = re.match("\d+", self.commentsRemoved[self.tokenIndex:])
             self.currentToken = numGroup.group(0)
             self.tokenIndex += len(self.currentToken)
-            self.type = JackTokenizer.INT_CONST
+            self.tokenType = JackTokenizer.INT_CONST
             matched = True
         #match identifier
         if not matched:
             identifierMatch = re.match("[a-zA-Z_]+[a-zA-Z0-9_]*", self.commentsRemoved[self.tokenIndex:])
             self.currentToken = identifierMatch.group(0)
             self.tokenIndex += len(self.currentToken)
-            self.type = JackTokenizer.IDENTIFIER
-
-    def tokenType(self):
-        return self.type
+            self.tokenType = JackTokenizer.IDENTIFIER
 
     def keyWord(self):
         return self.currentToken
@@ -115,6 +112,3 @@ class JackTokenizer:
 
     def stringVal(self):
         return self.currentToken[1:len(self.currentToken) - 2] #strips the quotes 
-
-    def current(self):
-        return self.currentToken
