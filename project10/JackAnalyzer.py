@@ -1,27 +1,44 @@
 class JackAnalyzer:
 
     def __init__(self, input):
-    import os
-    import JackTokenizer 
-    from JackTokenizer import JackTokenizer
+        import os
+        import JackTokenizer 
+        from JackTokenizer import JackTokenizer
+        
+
+        files = []
+        dir = os.path.splitext(input)[0]
+        ext = os.path.splitext(input)[1]
+
+        if ext == '':
+            for currentFile in os.listdir(input):
+                if os.path.splitext(currentFile)[1] == '.jack':
+                    files.append(os.path.join(input, currentFile))
+        elif ext == '.jack':
+            files.append(input)
+        else: 
+            raise Exception("File provided doesn't have a .jack extension")
     
+        for fileName in files:
+            self.writeFile(open(fileName), dir)
 
-    files = []
-    ext = os.path.splitext(input)[1]
-    if ext == '':
-        for currentFile in os.listdir(input):
-            file = open(currentFile)
-
-
-    def writeFile(outputFile):
+    def writeFile(self, inputFile, outputDirName):
+        import JackTokenizer
+        from JackTokenizer import JackTokenizer
+        import os
+        outputFileName = os.path.join(outputDirName, "output", os.path.split(inputFile.name)[1])
+        print("Output file name is " + outputFileName)
+        if(not os.path.exists(os.path.dirname(outputFileName))):
+            os.makedirs(os.path.dirname(outputFileName))
+        outputFile = open(outputFileName, 'w')
         outputFile.write("<tokens>\n")
         tokenizer = JackTokenizer(inputFile)
         while(tokenizer.hasMoreTokens()):
             tokenizer.advance()
             if tokenizer.tokenType == JackTokenizer.KEYWORD:
-                outputFile.write("<keyword>" + tokenizer.currentToken + "</keyword>\n")
+                outputFile.write("\t<keyword>" + tokenizer.currentToken + "</keyword>\n")
             elif tokenizer.tokenType == JackTokenizer.SYMBOL:
-                outputFile.write("<symbol>")
+                outputFile.write("\t<symbol>")
                 if tokenizer.currentToken == "&":
                     outputFile.write("&amp;")
                 elif tokenizer.currentToken == "<":
@@ -34,10 +51,10 @@ class JackAnalyzer:
                     outputFile.write(tokenizer.currentToken)
                 outputFile.write("</symbol>\n")
             elif tokenizer.tokenType == JackTokenizer.IDENTIFIER:
-                outputFile.write("<identifier>" + tokenizer.currentToken + "</identifier>\n")
+                outputFile.write("\t<identifier>" + tokenizer.currentToken + "</identifier>\n")
             elif tokenizer.tokenType == JackTokenizer.INT_CONST:
-                outputFile.write("<integerConstant>" + tokenizer.currentToken + "</integerConstant>\n")
+                outputFile.write("\t<integerConstant>" + tokenizer.currentToken + "</integerConstant>\n")
             elif tokenizer.tokenType == JackTokenizer.STRING_CONST:
-                outputFile.write("<stringConstant>" + tokenizer.currentToken + "</stringConstant>\n")
+                outputFile.write("\t<stringConstant>" + tokenizer.currentToken + "</stringConstant>\n")
         
         outputFile.write("</tokens>\n")
