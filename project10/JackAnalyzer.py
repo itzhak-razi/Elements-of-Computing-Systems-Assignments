@@ -26,8 +26,8 @@ class JackAnalyzer:
         import JackTokenizer
         from JackTokenizer import JackTokenizer
         import os
-        outputFileName = os.path.join(outputDirName, "output", os.path.split(inputFile.name)[1])
-        print("Output file name is " + outputFileName)
+        outputFileName = os.path.join(outputDirName, "output", 
+            os.path.splitext(os.path.basename(inputFile.name))[0] + ".xml")
         if(not os.path.exists(os.path.dirname(outputFileName))):
             os.makedirs(os.path.dirname(outputFileName))
         outputFile = open(outputFileName, 'w')
