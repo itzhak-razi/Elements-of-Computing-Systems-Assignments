@@ -99,16 +99,26 @@ class JackTokenizer:
             self.tokenType = JackTokenizer.IDENTIFIER
 
     def keyWord(self):
+        if self.tokenType != JackTokenizer.KEYWORD:
+            raise TypeError("Keyword token not available")
         return self.currentToken
 
     def symbol(self):
+        if self.tokenType != JackTokenizer.SYMBOL:
+            raise TypeError("Symbol token not available")
         return self.currentToken
 
     def identifier(self):
+        if self.tokenType != JackTokenizer.IDENTIFIER:
+            raise TypeError("Identifier token not available")
         return self.currentToken
 
     def intVal(self):
+        if self.tokenType != JackTokenizer.INT_CONST:
+            raise TypeError("Integer token not available")
         return self.currentToken
 
     def stringVal(self):
+        if self.tokenType != JackTokenizer.STRING_CONST:
+            raise TypeError("String token not available")
         return self.currentToken[1:len(self.currentToken) - 2] #strips the quotes 
