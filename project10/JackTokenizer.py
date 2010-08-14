@@ -12,8 +12,6 @@ class JackTokenizer:
     IDENTIFIER = 2
     INT_CONST = 3
     STRING_CONST = 4
-    
-
 
     def __init__(self, inputFile):
         import re
