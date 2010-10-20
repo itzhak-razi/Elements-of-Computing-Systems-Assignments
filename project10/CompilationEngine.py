@@ -112,7 +112,7 @@ class CompilationEngine:
         self.outputFile.write("</statements>\n")
 
     def compileDo(self):
-        self.outputFile.write("</doStatement>\n")
+        self.outputFile.write("<doStatement>\n")
         if self.tokenizer.keyWord() != "do":
             raise Exception("'do' keyword expected")
         self.printToken()
@@ -127,18 +127,40 @@ class CompilationEngine:
         self.outputFile.write("</doStatement>\n")
 
     def compileLet(self):
+        #Not implemented until tested with Square Dance
+        self.outputFile.write("<letStatement>\n")
+        if self.tokenizer.keyWord() != "let":
+            raise Exception("Let keyword expected")
+        self.printToken()
+        while self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType()
+        self.outputFile.write("</letStatement>\n")
 
     def compileWhile(self):
+        #Not implemented until tested with Square Dance
 
     def compileReturn(self):
+        #Not implemented until tested with Square Dance
 
     def compileIf(self):
+        #Not implemented until tested with Square Dance
 
     def compileExpression(self):
+        #Not implemented until tested with Square Dance
 
     def compileTerm(self):
+        self.outputFile.write("<term>")
+        self.printToken()
+        currentType = self.tokenizer.tokenType()
+        self.tokenizer.advance()
+        if currentType == JackTokenizer.IDENTIFIER:
+            if self.tokenizer.tokenType == JackTokenizer.SYMBOL:
+                #Requires expression, not implemented yet
+        elif currentType == JackTokenizer.SYMBOL:
+            self.compileTerm()
+        self.outputFile.write("</term>")
 
     def compileExpressionList(self):
+        #Not implemented until tested with Square Dance
     
     def printToken(self):
         import JackTokenizer
