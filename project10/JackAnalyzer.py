@@ -15,18 +15,33 @@ class JackAnalyzer:
                 if os.path.splitext(currentFile)[1] == '.jack':
                     files.append(os.path.join(input, currentFile))
         elif ext == '.jack':
+            #os.path.splitext will only return the directory when the file doesn't have an extension
+            dir = os.path.split(input)[0] 
             files.append(input)
         else: 
             raise Exception("File provided doesn't have a .jack extension")
     
         for fileName in files:
             self.writeFile(open(fileName), dir)
-
-    def writeFile(self, inputFile, outputDirName):
+    
+    def writeFile(self, inputFile, inputDirName):
+        from JackTokenizer import JackTokenizer
+        from CompilationEngine import CompilationEngine
+        import os
+        outputFileName = os.path.join(inputDirName, "output",
+            os.path.splitext(os.path.basename(inputFile.name))[0] + ".xml")
+        
+        if(not os.path.exists(os.path.dirname(outputFileName))):
+            os.makedirs(os.path.dirname(outputFileName))
+        outputFile = open(outputFileName, 'w')
+        tokenizer = JackTokenizer(inputFile)
+        engine = CompilationEngine(tokenizer, outputFile)
+    
+    def writeTokenizerFile(self, inputFile, inputDirName):
         import JackTokenizer
         from JackTokenizer import JackTokenizer
         import os
-        outputFileName = os.path.join(outputDirName, "output", 
+        outputFileName = os.path.join(inputDirName, "output", 
             os.path.splitext(os.path.basename(inputFile.name))[0] + ".xml")
         if(not os.path.exists(os.path.dirname(outputFileName))):
             os.makedirs(os.path.dirname(outputFileName))
