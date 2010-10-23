@@ -86,8 +86,8 @@ class CompilationEngine:
 
     def compileVarDec(self):
         self.outputFile.write("<varDec>\n")
-        while self.tokenizer.hasMoreTokens() and 
-                (self.tokenizer.tokenType != JackTokenizer.SYMBOL or self.tokenizer.symbol() != ";"):
+        while(self.tokenizer.hasMoreTokens() and 
+                (self.tokenizer.tokenType != JackTokenizer.SYMBOL or self.tokenizer.symbol() != ";")):
             self.printToken()
             self.tokenizer.advance()
         self.printToken()
@@ -132,7 +132,8 @@ class CompilationEngine:
         if self.tokenizer.keyWord() != "let":
             raise Exception("Let keyword expected")
         self.printToken()
-        while self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType()
+        while self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType():
+            #TODO - put in later
         self.outputFile.write("</letStatement>\n")
 
     def compileWhile(self):
