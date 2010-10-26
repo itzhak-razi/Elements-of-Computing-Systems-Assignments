@@ -36,6 +36,8 @@ class JackAnalyzer:
         outputFile = open(outputFileName, 'w')
         tokenizer = JackTokenizer(inputFile)
         engine = CompilationEngine(tokenizer, outputFile)
+        tokenizer.advance()
+        engine.compileClass()
     
     def writeTokenizerFile(self, inputFile, inputDirName):
         import JackTokenizer

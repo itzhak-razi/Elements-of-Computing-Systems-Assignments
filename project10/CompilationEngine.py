@@ -1,6 +1,6 @@
 class CompilationEngine:
 
-    def __init(self, tokenizer, outputFile):
+    def __init__(self, tokenizer, outputFile):
         self.tokenizer = tokenizer
         self.outputFile = outputFile
     
@@ -9,11 +9,11 @@ class CompilationEngine:
         classVarOpenings = ['static', 'field']
         subOpenings = ['constructor', 'function', 'method']
 
-        if tokenizer.currentToken != "class":
+        if self.tokenizer.currentToken != "class":
             raise Exception("Keyword 'class' expected")
         self.outputFile.write("<class>\n")
         i = 0
-        while tokenizer.hasMoreTokens() and i < NUM_OPENING_STATEMENTS: 
+        while self.tokenizer.hasMoreTokens() and i < NUM_OPENING_STATEMENTS: 
             self.printToken()
             self.tokenizer.advance()
             i += 1
@@ -23,7 +23,7 @@ class CompilationEngine:
         while self.tokenizer.hasMoreTokens() and self.tokenizer.keyWord in subOpenings:
             self.compileSubroutine()
         self.printToken()
-        outputFile.write("</class>\n")
+        self.outputFile.write("</class>\n")
     
     def compileClassVarDec(self):
         self.outputFile.write("<classVarDec>\n")
@@ -37,13 +37,13 @@ class CompilationEngine:
         while self.tokenizer.symbol() != ";" and self.tokenizer.hasMoreTokens():
             if self.tokenizer.symbol() != ",":
                 raise Exception("Invalid variable list")
-            self.tokenizer.printToken()
+            self.printToken()
             self.tokenizer.advance()
-            self.tokenizer.printToken()
+            self.printToken()
             if not self.tokenizer.hasMoreTokens():
                 raise Exception("Another variable expected in list")
             self.tokenizer.advance()
-        self.tokenizer.printToken()
+        self.printToken()
 
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
@@ -133,19 +133,24 @@ class CompilationEngine:
             raise Exception("Let keyword expected")
         self.printToken()
         while self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType():
+            pass
             #TODO - put in later
         self.outputFile.write("</letStatement>\n")
 
     def compileWhile(self):
+        pass
         #Not implemented until tested with Square Dance
 
     def compileReturn(self):
+        pass
         #Not implemented until tested with Square Dance
 
     def compileIf(self):
+        pass
         #Not implemented until tested with Square Dance
 
     def compileExpression(self):
+        pass
         #Not implemented until tested with Square Dance
 
     def compileTerm(self):
@@ -155,12 +160,14 @@ class CompilationEngine:
         self.tokenizer.advance()
         if currentType == JackTokenizer.IDENTIFIER:
             if self.tokenizer.tokenType == JackTokenizer.SYMBOL:
+                pass
                 #Requires expression, not implemented yet
         elif currentType == JackTokenizer.SYMBOL:
             self.compileTerm()
         self.outputFile.write("</term>")
 
     def compileExpressionList(self):
+        pass
         #Not implemented until tested with Square Dance
     
     def printToken(self):
