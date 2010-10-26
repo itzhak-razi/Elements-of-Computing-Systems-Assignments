@@ -6,6 +6,7 @@ class CompilationEngine:
         print(outputFile)
     
     def compileClass(self):
+        from JackTokenizer import JackTokenizer
         NUM_OPENING_STATEMENTS = 3
         classVarOpenings = ['static', 'field']
         subOpenings = ['constructor', 'function', 'method']
@@ -25,7 +26,8 @@ class CompilationEngine:
             classVarCount += 1
             self.compileClassVarDec()
             print("Token after class is - " + self.tokenizer.currentToken)
-        while self.tokenizer.hasMoreTokens() and self.tokenizer.keyWord() in subOpenings:
+        while(self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType == JackTokenizer.KEYWORD 
+                and self.tokenizer.keyWord() in subOpenings):
             self.compileSubroutine()
             print("compile subroutine should have been called")
         self.printToken()
@@ -93,6 +95,7 @@ class CompilationEngine:
         self.outputFile.write("</parameterList>\n")
 
     def compileVarDec(self):
+        from JackTokenizer import JackTokenizer
         self.outputFile.write("<varDec>\n")
         while(self.tokenizer.hasMoreTokens() and 
                 (self.tokenizer.tokenType != JackTokenizer.SYMBOL or self.tokenizer.symbol() != ";")):
@@ -103,6 +106,7 @@ class CompilationEngine:
         self.outputFile.write("</varDec>\n")
 
     def compileStatements(self):
+        from JackTokenizer import JackTokenizer
         self.outputFile.write("<statements>\n")
         stmtStarts = ['do', 'while', 'let', 'if', 'return']
         while(self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType == JackTokenizer.KEYWORD 
@@ -120,6 +124,7 @@ class CompilationEngine:
         self.outputFile.write("</statements>\n")
 
     def compileDo(self):
+        from JackTokenizer import JackTokenizer
         self.outputFile.write("<doStatement>\n")
         if self.tokenizer.keyWord() != "do":
             raise Exception("'do' keyword expected")
@@ -162,6 +167,7 @@ class CompilationEngine:
         #Not implemented until tested with Square Dance
 
     def compileTerm(self):
+        from JackTokenizer import JackTokenizer
         self.outputFile.write("<term>")
         self.printToken()
         currentType = self.tokenizer.tokenType()
