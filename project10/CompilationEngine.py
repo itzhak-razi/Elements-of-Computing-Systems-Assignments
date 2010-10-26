@@ -22,14 +22,11 @@ class CompilationEngine:
         
         classVarCount = 0
         while self.tokenizer.hasMoreTokens() and self.tokenizer.keyWord() in classVarOpenings:
-            print("ClassVarCount is " + str(classVarCount))
             classVarCount += 1
             self.compileClassVarDec()
-            print("Token after class is - " + self.tokenizer.currentToken)
         while(self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType == JackTokenizer.KEYWORD 
                 and self.tokenizer.keyWord() in subOpenings):
             self.compileSubroutine()
-            print("compile subroutine should have been called")
         self.printToken()
         self.outputFile.write("</class>\n")
     
