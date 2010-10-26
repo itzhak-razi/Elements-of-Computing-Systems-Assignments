@@ -2,7 +2,6 @@ class JackAnalyzer:
 
     def __init__(self, input):
         import os
-        import JackTokenizer 
         from JackTokenizer import JackTokenizer
         
 
@@ -40,7 +39,6 @@ class JackAnalyzer:
         engine.compileClass()
     
     def writeTokenizerFile(self, inputFile, inputDirName):
-        import JackTokenizer
         from JackTokenizer import JackTokenizer
         import os
         outputFileName = os.path.join(inputDirName, "output", 

@@ -3,6 +3,7 @@ class CompilationEngine:
     def __init__(self, tokenizer, outputFile):
         self.tokenizer = tokenizer
         self.outputFile = outputFile
+        print(outputFile)
     
     def compileClass(self):
         NUM_OPENING_STATEMENTS = 3
@@ -18,10 +19,15 @@ class CompilationEngine:
             self.tokenizer.advance()
             i += 1
         
+        classVarCount = 0
         while self.tokenizer.hasMoreTokens() and self.tokenizer.keyWord() in classVarOpenings:
+            print("ClassVarCount is " + str(classVarCount))
+            classVarCount += 1
             self.compileClassVarDec()
+            print("Token after class is - " + self.tokenizer.currentToken)
         while self.tokenizer.hasMoreTokens() and self.tokenizer.keyWord in subOpenings:
             self.compileSubroutine()
+            print("compile subroutine should have been called")
         self.printToken()
         self.outputFile.write("</class>\n")
     
@@ -69,7 +75,6 @@ class CompilationEngine:
         self.outputFile.write("</subroutineDec>\n")
 
     def compileParameterList(self):
-        import JackTokenizer
         from JackTokenizer import JackTokenizer
         self.outputFile.write("<parameterList>\n")
         while self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() != ")":
@@ -171,7 +176,6 @@ class CompilationEngine:
         #Not implemented until tested with Square Dance
     
     def printToken(self):
-        import JackTokenizer
         from JackTokenizer import JackTokenizer
         if self.tokenizer.tokenType == JackTokenizer.KEYWORD:
            self.outputFile.write("\t<keyword>" + self.tokenizer.keyWord() + "</keyword>\n")
