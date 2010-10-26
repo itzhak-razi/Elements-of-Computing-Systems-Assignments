@@ -25,7 +25,7 @@ class CompilationEngine:
             classVarCount += 1
             self.compileClassVarDec()
             print("Token after class is - " + self.tokenizer.currentToken)
-        while self.tokenizer.hasMoreTokens() and self.tokenizer.keyWord in subOpenings:
+        while self.tokenizer.hasMoreTokens() and self.tokenizer.keyWord() in subOpenings:
             self.compileSubroutine()
             print("compile subroutine should have been called")
         self.printToken()
@@ -56,6 +56,8 @@ class CompilationEngine:
         self.outputFile.write("</classVarDec>\n")
 
     def compileSubroutine(self):
+        import JackTokenizer
+        from JackTokenizer import JackTokenizer
         self.outputFile.write("<subroutineDec>\n")
         NUM_OPENING_STATEMENTS = 4
         i = 0
@@ -67,7 +69,8 @@ class CompilationEngine:
         self.compileParameterList()
         self.printToken()
         self.tokenizer.advance()
-        while self.tokenizer.hasMoreTokens() and self.tokenizer.keyWord() == "var":
+        while(self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType == JackTokenizer.KEYWORD 
+                and self.tokenizer.keyWord() == "var"):
             self.compileVarDec()
         self.compileStatements()
         self.printToken()
