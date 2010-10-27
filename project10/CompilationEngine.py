@@ -79,16 +79,17 @@ class CompilationEngine:
     def compileParameterList(self):
         from JackTokenizer import JackTokenizer
         self.outputFile.write("<parameterList>\n")
-        while self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() != ")":
-            self.printToken()
+        while self.tokenizer.tokenType != JackTokenizer.SYMBOL or self.tokenizer.symbol() != ")":
+            boolVal = self.tokenizer.tokenType != JackTokenizer.SYMBOL or self.tokenizer.symbol() != ")"
+            self.printToken() #Should print the type or a comma
+            if self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() == ",":
+                self.tokenizer.advance()
+                self.printToken() #should print the type
             if self.tokenizer.hasMoreTokens():
                 self.tokenizer.advance()
-            self.printToken()
+            self.printToken() #Should print the variable name
             if self.tokenizer.hasMoreTokens():
-                self.tokenizer.advance()
-            self.printToken()
-            if self.tokenizer.hasMoreTokens():
-                self.tokenizer.advance()
+                self.tokenizer.advance() #should advance to a comma or a closing paren
         self.outputFile.write("</parameterList>\n")
 
     def compileVarDec(self):
