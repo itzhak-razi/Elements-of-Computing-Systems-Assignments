@@ -148,14 +148,20 @@ class CompilationEngine:
         self.outputFile.write("</doStatement>\n")
 
     def compileLet(self):
-        #Not implemented until tested with Square Dance
         self.outputFile.write("<letStatement>\n")
         if self.tokenizer.keyWord() != "let":
             raise Exception("Let keyword expected")
-        self.printToken()
-        #while self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType():
-        #    pass
-            #TODO - put in later
+        self.printToken() #Should print "let"
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance() #Should advance to varName
+        numOpeningStatements = 2
+        i = 0
+        while self.tokenizer.hasMoreTokens() and i < numOpeningStatements:
+            self.printToken()
+            self.tokenizer.advance()
+            i += 1
+            #TODO - This doesn't currently handle arrays. 
+        self.compileExpression()
         self.outputFile.write("</letStatement>\n")
 
     def compileWhile(self):
@@ -171,14 +177,17 @@ class CompilationEngine:
         #Not implemented until tested with Square Dance
 
     def compileExpression(self):
-        pass
-        #Not implemented until tested with Square Dance
+        self.outputFile.write("<expression>\n")
+        self.compileTerm()
+        #TODO - currently not implementing all of this.  
+        #Should handle an infinite number of terms separated by operators
+        self.outputFile.write("</expression>\n")
 
     def compileTerm(self):
         from JackTokenizer import JackTokenizer
-        self.outputFile.write("<term>")
+        self.outputFile.write("<term>\n")
         self.printToken()
-        currentType = self.tokenizer.tokenType()
+        currentType = self.tokenizer.tokenType
         self.tokenizer.advance()
         if currentType == JackTokenizer.IDENTIFIER:
             if self.tokenizer.tokenType == JackTokenizer.SYMBOL:
@@ -186,7 +195,7 @@ class CompilationEngine:
                 #Requires expression, not implemented yet
         elif currentType == JackTokenizer.SYMBOL:
             self.compileTerm()
-        self.outputFile.write("</term>")
+        self.outputFile.write("</term>\n")
 
     def compileExpressionList(self):
         pass
