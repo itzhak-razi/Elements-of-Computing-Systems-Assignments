@@ -138,7 +138,7 @@ class CompilationEngine:
             raise Exception("'do' keyword expected")
         self.printToken()
         while (self.tokenizer.hasMoreTokens() and 
-              (self.tokenizer.tokenType != JackTokenizer.SYMBOL or JackTokenizer.tokenType.symbol() != "(")):
+              (self.tokenizer.tokenType != JackTokenizer.SYMBOL or self.tokenizer.symbol() != "(")):
             self.tokenizer.advance() 
             self.printToken()
         self.compileExpressionList()
@@ -162,6 +162,9 @@ class CompilationEngine:
             i += 1
             #TODO - This doesn't currently handle arrays. 
         self.compileExpression()
+        self.printToken() #print ";"
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
         self.outputFile.write("</letStatement>\n")
 
     def compileWhile(self):
