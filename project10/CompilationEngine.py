@@ -74,9 +74,12 @@ class CompilationEngine:
         from JackTokenizer import JackTokenizer
         self.outputFile.write("<subroutineBody>\n")
         self.printToken() #Should print "{"
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
         while(self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType == JackTokenizer.KEYWORD
                 and self.tokenizer.keyWord() == "var"):
             self.compileVarDec()
+        print("Current token is " + self.tokenizer.currentToken)
         self.compileStatements()
         self.printToken() #Should print closing "}"
         if self.tokenizer.hasMoreTokens():
@@ -150,8 +153,8 @@ class CompilationEngine:
         if self.tokenizer.keyWord() != "let":
             raise Exception("Let keyword expected")
         self.printToken()
-        while self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType():
-            pass
+        #while self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType():
+        #    pass
             #TODO - put in later
         self.outputFile.write("</letStatement>\n")
 
