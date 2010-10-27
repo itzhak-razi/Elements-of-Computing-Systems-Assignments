@@ -55,7 +55,6 @@ class CompilationEngine:
         self.outputFile.write("</classVarDec>\n")
 
     def compileSubroutine(self):
-        import JackTokenizer
         from JackTokenizer import JackTokenizer
         self.outputFile.write("<subroutineDec>\n")
         NUM_OPENING_STATEMENTS = 4
@@ -64,17 +63,25 @@ class CompilationEngine:
             self.printToken()
             self.tokenizer.advance()
             i += 1
-
         self.compileParameterList()
-        self.printToken()
-        self.tokenizer.advance()
-        while(self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType == JackTokenizer.KEYWORD 
+        self.printToken() #Should print closing ")" after parameter list
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+        self.compileSubroutineBody()
+        self.outputFile.write("</subroutineDec>\n")
+    
+    def compileSubroutineBody(self):
+        from JackTokenizer import JackTokenizer
+        self.outputFile.write("<subroutineBody>\n")
+        self.printToken() #Should print "{"
+        while(self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType == JackTokenizer.KEYWORD
                 and self.tokenizer.keyWord() == "var"):
             self.compileVarDec()
         self.compileStatements()
-        self.printToken()
-        self.tokenizer.advance()
-        self.outputFile.write("</subroutineDec>\n")
+        self.printToken() #Should print closing "}"
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+        self.outputFile.write("</subroutineBody>\n")
 
     def compileParameterList(self):
         from JackTokenizer import JackTokenizer
