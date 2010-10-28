@@ -188,8 +188,37 @@ class CompilationEngine:
             self.tokenizer.advance()
 
     def compileIf(self):
-        pass
-        #Not implemented until tested with Square Dance
+        if self.tokenizer.keyWord() != "if":
+            raise Exception("'if' keyword was expected")
+        self.printToken() #print 'if'
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+            self.printToken() #print '('
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+            self.compileExpression()
+            self.printToken() #print ')'
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+            self.printToken() #print '{'
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+            self.compileStatements()
+            self.printToken() #print '}'
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+        if not(self.tokenizer.tokenType == JackTokenizer.KEYWORD and self.tokenizer.keyWord() == "else"):
+            return
+        self.printToken() #print 'else'
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+            self.printToken() #print '{'
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+            self.compileStatements()
+        self.printToken() #print '}'
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
 
     def compileExpression(self):
         self.outputFile.write("<expression>\n")
