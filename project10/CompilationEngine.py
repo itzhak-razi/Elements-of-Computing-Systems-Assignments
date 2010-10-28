@@ -172,6 +172,7 @@ class CompilationEngine:
 
     def compileWhile(self):
         from JackTokenizer import JackTokenizer
+        self.outputFile.write("<whileStatement>\n")
         if not(self.tokenizer.tokenType == JackTokenizer.KEYWORD and self.tokenizer.keyWord() == "while"):
             raise Exception("'while' keyword was expected")
         self.printToken() #print 'while'
@@ -191,9 +192,11 @@ class CompilationEngine:
             self.printToken() #print '}'
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
+        self.outputFile.write("</whileStatement>\n")
 
     def compileReturn(self):
         from JackTokenizer import JackTokenizer
+        self.outputFile.write("<returnStatement>\n")
         if self.tokenizer.keyWord() != "return":
             raise Exception("'return' keyword was expected")
         self.printToken() #print 'return' keyword
@@ -204,9 +207,11 @@ class CompilationEngine:
         self.printToken() #print ";"
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
+        self.outputFile.write("</returnStatement>\n")
 
     def compileIf(self):
         from JackTokenizer import JackTokenizer
+        self.outputFile.write("<ifStatement>\n")
         if self.tokenizer.keyWord() != "if":
             raise Exception("'if' keyword was expected")
         self.printToken() #print 'if'
@@ -227,6 +232,7 @@ class CompilationEngine:
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
         if not(self.tokenizer.tokenType == JackTokenizer.KEYWORD and self.tokenizer.keyWord() == "else"):
+            self.outputFile.write("</ifStatement>\n")
             return
         self.printToken() #print 'else'
         if self.tokenizer.hasMoreTokens():
@@ -238,6 +244,7 @@ class CompilationEngine:
         self.printToken() #print '}'
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
+        self.outputFile.write("</ifStatement>\n")
 
     def compileExpression(self):
         self.outputFile.write("<expression>\n")
