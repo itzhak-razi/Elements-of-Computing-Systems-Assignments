@@ -1,3 +1,7 @@
+#TODO - must finish the compileTerm() method.  This means handling subroutine calls.  
+#What I should probably do is implement compileSubroutineCall method (even though it's not 
+#explicitly mentioned by the book) and implement what the book says.  This has the added benefit
+#that I can replace my subroutine call in compileDo() because it appears to be broken.
 class CompilationEngine:
 
     def __init__(self, tokenizer, outputFile):
@@ -247,23 +251,32 @@ class CompilationEngine:
         self.outputFile.write("</ifStatement>\n")
 
     def compileExpression(self):
+        from JackTokenizer import JackTokenizer
+        opList = ['+', '-', '*', '/', '&', '|', '<', '>', '=']
         self.outputFile.write("<expression>\n")
         self.compileTerm()
-        #TODO - currently not implementing all of this.  
-        #Should handle an infinite number of terms separated by operators
+        while self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() in opList:
+            self.printToken()
+            if self.tokenizer.hasMoreTokens():
+                self.tokenizer.advance()
+                self.compileTerm()
         self.outputFile.write("</expression>\n")
 
     def compileTerm(self):
         from JackTokenizer import JackTokenizer
+        unaryOps = ['-', '~']
         self.outputFile.write("<term>\n")
         self.printToken()
-        currentType = self.tokenizer.tokenType
-        self.tokenizer.advance()
-        if currentType == JackTokenizer.IDENTIFIER:
+        if self.tokenizer.tokenType == JackTokenizer.IDENTIFIER:
+            self.tokenizer.advance()
+            self.printToken()
             if self.tokenizer.tokenType == JackTokenizer.SYMBOL:
-                pass
-                #Requires expression, not implemented yet
-        elif currentType == JackTokenizer.SYMBOL:
+        elif self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() == "(":
+            self.tokenizer.advance()
+            self.compileExpression()
+            self.printToken() #print ')'
+        elif self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() in unaryOps:
+            self.tokenizer.advance()
             self.compileTerm()
         self.outputFile.write("</term>\n")
 
