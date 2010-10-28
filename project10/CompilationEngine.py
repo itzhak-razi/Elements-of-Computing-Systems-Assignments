@@ -145,6 +145,8 @@ class CompilationEngine:
         self.printToken() #print ')'
         self.tokenizer.advance()
         self.printToken() #Print ';'
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
         self.outputFile.write("</doStatement>\n")
 
     def compileLet(self):
