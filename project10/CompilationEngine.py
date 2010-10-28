@@ -171,8 +171,26 @@ class CompilationEngine:
         self.outputFile.write("</letStatement>\n")
 
     def compileWhile(self):
-        pass
-        #Not implemented until tested with Square Dance
+        from JackTokenizer import JackTokenizer
+        if not(self.tokenizer.tokenType == JackTokenizer.KEYWORD and self.tokenizer.keyWord() == "while"):
+            raise Exception("'while' keyword was expected")
+        self.printToken() #print 'while'
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+            self.printToken() #print '('
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+            self.compileExpression()
+            self.printToken() #print ')'
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+            self.printToken() #print '{'
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+            self.compileStatements()
+            self.printToken() #print '}'
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
 
     def compileReturn(self):
         from JackTokenizer import JackTokenizer
