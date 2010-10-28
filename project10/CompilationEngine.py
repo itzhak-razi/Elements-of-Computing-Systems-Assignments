@@ -188,6 +188,7 @@ class CompilationEngine:
             self.tokenizer.advance()
 
     def compileIf(self):
+        from JackTokenizer import JackTokenizer
         if self.tokenizer.keyWord() != "if":
             raise Exception("'if' keyword was expected")
         self.printToken() #print 'if'
