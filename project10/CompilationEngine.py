@@ -213,7 +213,20 @@ class CompilationEngine:
         self.outputFile.write("</term>\n")
 
     def compileExpressionList(self):
-    
+        from JackTokenizer import JackTokenizer
+        self.outputFile.write("<expressionList>\n")
+        #I sort of feel guilty for doing this since this relies on knowing that
+        #the expression list is surrounded by parenthesis and according to the spec
+        #it should not know that (it would require modifying this message if I wanted to use an expression list anywhere else).
+        #However, also according to the spec I should create a <subroutineCall> XML element
+        while not(self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() == ")"):
+           self.compileExpression() 
+           if self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() == ",":
+               self.printToken() #print ','
+               if self.tokenizer.hasMoreTokens():
+                   self.tokenizer.advance()
+        self.outputFile.write("</expressionList>\n")
+
     def printToken(self):
         from JackTokenizer import JackTokenizer
         if self.tokenizer.tokenType == JackTokenizer.KEYWORD:
