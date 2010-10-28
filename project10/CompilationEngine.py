@@ -141,6 +141,7 @@ class CompilationEngine:
               (self.tokenizer.tokenType != JackTokenizer.SYMBOL or self.tokenizer.symbol() != "(")):
             self.tokenizer.advance() 
             self.printToken()
+        self.tokenizer.advance()
         self.compileExpressionList()
         self.printToken() #print ')'
         self.tokenizer.advance()
@@ -212,8 +213,6 @@ class CompilationEngine:
         self.outputFile.write("</term>\n")
 
     def compileExpressionList(self):
-        pass
-        #Not implemented until tested with Square Dance
     
     def printToken(self):
         from JackTokenizer import JackTokenizer
