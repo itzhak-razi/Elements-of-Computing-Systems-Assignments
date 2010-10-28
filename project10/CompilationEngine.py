@@ -79,7 +79,6 @@ class CompilationEngine:
         while(self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType == JackTokenizer.KEYWORD
                 and self.tokenizer.keyWord() == "var"):
             self.compileVarDec()
-        print("Current token is " + self.tokenizer.currentToken)
         self.compileStatements()
         self.printToken() #Should print closing "}"
         if self.tokenizer.hasMoreTokens():
@@ -119,6 +118,7 @@ class CompilationEngine:
         stmtStarts = ['do', 'while', 'let', 'if', 'return']
         while(self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType == JackTokenizer.KEYWORD 
               and self.tokenizer.keyWord() in stmtStarts):
+            print("The current token is " + self.tokenizer.currentToken)
             if self.tokenizer.keyWord() == "do":
                 self.compileDo()
             elif self.tokenizer.keyWord() == "while":
@@ -172,8 +172,17 @@ class CompilationEngine:
         #Not implemented until tested with Square Dance
 
     def compileReturn(self):
-        pass
-        #Not implemented until tested with Square Dance
+        from JackTokenizer import JackTokenizer
+        if self.tokenizer.keyWord() != "return":
+            raise Exception("'return' keyword was expected")
+        self.printToken() #print 'return' keyword
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+        if not(self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() == ";"):
+            self.compileExpression()
+        self.printToken() #print ";"
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
 
     def compileIf(self):
         pass
