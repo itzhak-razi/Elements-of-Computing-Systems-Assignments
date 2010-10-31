@@ -277,10 +277,10 @@ class CompilationEngine:
         self.printToken()
         if self.tokenizer.tokenType == JackTokenizer.IDENTIFIER:
             self.tokenizer.advance()
-            self.printToken()
             print("second token in IDENTIFIER " + self.tokenizer.currentToken)
             if self.tokenizer.tokenType == JackTokenizer.SYMBOL:
                 if self.tokenizer.symbol() == ".":
+                    self.printToken()
                     print("Doing the dot thing")
                     if self.tokenizer.hasMoreTokens():
                         self.tokenizer.advance()
@@ -288,6 +288,7 @@ class CompilationEngine:
                         self.compileSubroutineCall()
                         print("Current token after compiling subroutine is " + self.tokenizer.currentToken)
                 elif self.tokenizer.symbol() == "(":
+                    self.printToken()
                     if self.tokenizer.hasMoreTokens():
                         self.tokenizer.advance()
                         self.compileExpressionList()
@@ -295,6 +296,7 @@ class CompilationEngine:
                         if self.tokenizer.hasMoreTokens():
                             self.tokenizer.advance()
                 elif self.tokenizer.symbol() == "[":
+                    self.printToken()
                     self.compileExpression()
                     self.printToken() #Should print ']'
                     if self.tokenizer.hasMoreTokens():
