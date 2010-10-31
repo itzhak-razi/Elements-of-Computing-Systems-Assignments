@@ -8,13 +8,15 @@ class CompilationEngine:
     
     def compileClass(self):
         from JackTokenizer import JackTokenizer
+        self.indentLevel = 0
         NUM_OPENING_STATEMENTS = 3
         classVarOpenings = ['static', 'field']
         subOpenings = ['constructor', 'function', 'method']
 
         if self.tokenizer.currentToken != "class":
             raise Exception("Keyword 'class' expected")
-        self.outputFile.write("<class>\n")
+        self.writeFormatted("<class>")
+        self.indentLevel += 1
         i = 0
         while self.tokenizer.hasMoreTokens() and i < NUM_OPENING_STATEMENTS: 
             self.printToken()
@@ -29,10 +31,12 @@ class CompilationEngine:
                 and self.tokenizer.keyWord() in subOpenings):
             self.compileSubroutine()
         self.printToken()
-        self.outputFile.write("</class>\n")
+        self.writeFormatted("</class>")
+        self.indentLevel -= 1
     
     def compileClassVarDec(self):
-        self.outputFile.write("<classVarDec>\n")
+        self.writeFormatted("<classVarDec>")
+        self.indentLevel += 1
         NUM_OPENING_STATEMENTS = 3
         i = 0
         while self.tokenizer.hasMoreTokens() and i < NUM_OPENING_STATEMENTS:
@@ -53,11 +57,13 @@ class CompilationEngine:
 
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
-        self.outputFile.write("</classVarDec>\n")
+        self.indentLevel -= 1
+        self.writeFormatted("</classVarDec>")
 
     def compileSubroutine(self):
         from JackTokenizer import JackTokenizer
-        self.outputFile.write("<subroutineDec>\n")
+        self.writeFormatted("<subroutineDec>")
+        self.indentLevel += 1
         NUM_OPENING_STATEMENTS = 4
         i = 0
         while self.tokenizer.hasMoreTokens() and i < NUM_OPENING_STATEMENTS:
@@ -69,11 +75,13 @@ class CompilationEngine:
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
         self.compileSubroutineBody()
-        self.outputFile.write("</subroutineDec>\n")
+        self.indentLevel -= 1
+        self.writeFormatted("</subroutineDec>")
     
     def compileSubroutineBody(self):
         from JackTokenizer import JackTokenizer
-        self.outputFile.write("<subroutineBody>\n")
+        self.writeFormatted("<subroutineBody>")
+        self.indentLevel += 1
         self.printToken() #Should print "{"
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
@@ -84,11 +92,13 @@ class CompilationEngine:
         self.printToken() #Should print closing "}"
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
-        self.outputFile.write("</subroutineBody>\n")
+        self.indentLevel -= 1
+        self.writeFormatted("</subroutineBody>")
 
     def compileParameterList(self):
         from JackTokenizer import JackTokenizer
-        self.outputFile.write("<parameterList>\n")
+        self.writeFormatted("<parameterList>")
+        self.indentLevel += 1
         while self.tokenizer.tokenType != JackTokenizer.SYMBOL or self.tokenizer.symbol() != ")":
             boolVal = self.tokenizer.tokenType != JackTokenizer.SYMBOL or self.tokenizer.symbol() != ")"
             self.printToken() #Should print the type or a comma
@@ -100,22 +110,26 @@ class CompilationEngine:
             self.printToken() #Should print the variable name
             if self.tokenizer.hasMoreTokens():
                 self.tokenizer.advance() #should advance to a comma or a closing paren
-        self.outputFile.write("</parameterList>\n")
+        self.indentLevel -= 1
+        self.writeFormatted("</parameterList>")
 
     def compileVarDec(self):
         from JackTokenizer import JackTokenizer
-        self.outputFile.write("<varDec>\n")
+        self.writeFormatted("<varDec>")
+        self.indentLevel += 1
         while(self.tokenizer.hasMoreTokens() and 
                 (self.tokenizer.tokenType != JackTokenizer.SYMBOL or self.tokenizer.symbol() != ";")):
             self.printToken()
             self.tokenizer.advance()
         self.printToken()
         self.tokenizer.advance()
-        self.outputFile.write("</varDec>\n")
+        self.indentLevel -= 1
+        self.writeFormatted("</varDec>")
 
     def compileStatements(self):
         from JackTokenizer import JackTokenizer
-        self.outputFile.write("<statements>\n")
+        self.writeFormatted("<statements>")
+        self.indentLevel += 1
         stmtStarts = ['do', 'while', 'let', 'if', 'return']
         while(self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType == JackTokenizer.KEYWORD 
               and self.tokenizer.keyWord() in stmtStarts):
@@ -129,11 +143,13 @@ class CompilationEngine:
                 self.compileIf()
             elif self.tokenizer.keyWord() == "return":
                 self.compileReturn()
-        self.outputFile.write("</statements>\n")
+        self.indentLevel -= 1
+        self.writeFormatted("</statements>")
 
     def compileDo(self):
         from JackTokenizer import JackTokenizer
-        self.outputFile.write("<doStatement>\n")
+        self.writeFormatted("<doStatement>")
+        self.indentLevel += 1
         if self.tokenizer.keyWord() != "do":
             raise Exception("'do' keyword expected")
         self.printToken()
@@ -148,10 +164,12 @@ class CompilationEngine:
         self.printToken() #Print ';'
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
-        self.outputFile.write("</doStatement>\n")
+        self.indentLevel -= 1
+        self.writeFormatted("</doStatement>")
 
     def compileLet(self):
-        self.outputFile.write("<letStatement>\n")
+        self.writeFormatted("<letStatement>")
+        self.indentLevel += 1
         if self.tokenizer.keyWord() != "let":
             raise Exception("Let keyword expected")
         self.printToken() #Should print "let"
@@ -177,11 +195,13 @@ class CompilationEngine:
         self.printToken() #print ";"
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
-        self.outputFile.write("</letStatement>\n")
+        self.indentLevel -= 1
+        self.writeFormatted("</letStatement>")
 
     def compileWhile(self):
         from JackTokenizer import JackTokenizer
-        self.outputFile.write("<whileStatement>\n")
+        self.writeFormatted("<whileStatement>")
+        self.indentLevel += 1
         if not(self.tokenizer.tokenType == JackTokenizer.KEYWORD and self.tokenizer.keyWord() == "while"):
             raise Exception("'while' keyword was expected")
         self.printToken() #print 'while'
@@ -201,11 +221,13 @@ class CompilationEngine:
             self.printToken() #print '}'
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
-        self.outputFile.write("</whileStatement>\n")
+        self.indentLevel -= 1
+        self.writeFormatted("</whileStatement>")
 
     def compileReturn(self):
         from JackTokenizer import JackTokenizer
-        self.outputFile.write("<returnStatement>\n")
+        self.writeFormatted("<returnStatement>")
+        self.indentLevel += 1
         if self.tokenizer.keyWord() != "return":
             raise Exception("'return' keyword was expected")
         self.printToken() #print 'return' keyword
@@ -216,11 +238,13 @@ class CompilationEngine:
         self.printToken() #print ";"
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
-        self.outputFile.write("</returnStatement>\n")
+        self.indentLevel -= 1
+        self.writeFormatted("</returnStatement>")
 
     def compileIf(self):
         from JackTokenizer import JackTokenizer
-        self.outputFile.write("<ifStatement>\n")
+        self.writeFormatted("<ifStatement>")
+        self.indentLevel += 1
         if self.tokenizer.keyWord() != "if":
             raise Exception("'if' keyword was expected")
         self.printToken() #print 'if'
@@ -241,7 +265,7 @@ class CompilationEngine:
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
         if not(self.tokenizer.tokenType == JackTokenizer.KEYWORD and self.tokenizer.keyWord() == "else"):
-            self.outputFile.write("</ifStatement>\n")
+            self.writeFormatted("</ifStatement>")
             return
         self.printToken() #print 'else'
         if self.tokenizer.hasMoreTokens():
@@ -253,12 +277,14 @@ class CompilationEngine:
         self.printToken() #print '}'
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
-        self.outputFile.write("</ifStatement>\n")
+        self.indentLevel -= 1
+        self.writeFormatted("</ifStatement>")
 
     def compileExpression(self):
         from JackTokenizer import JackTokenizer
         opList = ['+', '-', '*', '/', '&', '|', '<', '>', '=']
-        self.outputFile.write("<expression>\n")
+        self.writeFormatted("<expression>")
+        self.indentLevel += 1
         print("About to call compile term current token is " + self.tokenizer.currentToken)
         self.compileTerm()
         while self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() in opList:
@@ -267,13 +293,15 @@ class CompilationEngine:
             if self.tokenizer.hasMoreTokens():
                 self.tokenizer.advance()
                 self.compileTerm()
-        self.outputFile.write("</expression>\n")
+        self.indentLevel -= 1
+        self.writeFormatted("</expression>")
 
     def compileTerm(self):
         from JackTokenizer import JackTokenizer
         print("Opening token is " + self.tokenizer.currentToken)
         unaryOps = ['-', '~']
-        self.outputFile.write("<term>\n")
+        self.writeFormatted("<term>")
+        self.indentLevel += 1
         self.printToken()
         if self.tokenizer.tokenType == JackTokenizer.IDENTIFIER:
             self.tokenizer.advance()
@@ -322,11 +350,13 @@ class CompilationEngine:
         else:
             raise Exception("Invalid term provided")
         print("The current token is " + self.tokenizer.currentToken)
-        self.outputFile.write("</term>\n")
+        self.indentLevel -= 1
+        self.writeFormatted("</term>")
 
     def compileExpressionList(self):
         from JackTokenizer import JackTokenizer
-        self.outputFile.write("<expressionList>\n")
+        self.writeFormatted("<expressionList>")
+        self.indentLevel += 1
         #I sort of feel guilty for doing this since this relies on knowing that
         #the expression list is surrounded by parenthesis and according to the spec
         #it should not know that (it would require modifying this message if I wanted to use an expression list anywhere else).
@@ -337,7 +367,8 @@ class CompilationEngine:
                self.printToken() #print ','
                if self.tokenizer.hasMoreTokens():
                    self.tokenizer.advance()
-        self.outputFile.write("</expressionList>\n")
+        self.indentLevel -= 1
+        self.writeFormatted("</expressionList>")
 
     def compileSubroutineCall(self):
         from JackTokenizer import JackTokenizer
@@ -367,12 +398,15 @@ class CompilationEngine:
     def printToken(self):
         from JackTokenizer import JackTokenizer
         if self.tokenizer.tokenType == JackTokenizer.KEYWORD:
-           self.outputFile.write("\t<keyword>" + self.tokenizer.keyWord() + "</keyword>\n")
+           self.writeFormatted("<keyword>" + self.tokenizer.keyWord() + "</keyword>")
         elif self.tokenizer.tokenType == JackTokenizer.SYMBOL:
-            self.outputFile.write("\t<symbol>" + self.tokenizer.symbol() + "</symbol>\n")
+            self.writeFormatted("<symbol>" + self.tokenizer.symbol() + "</symbol>")
         elif self.tokenizer.tokenType == JackTokenizer.IDENTIFIER:
-            self.outputFile.write("\t<identifier>" + self.tokenizer.identifier() + "</identifier>\n")
+            self.writeFormatted("<identifier>" + self.tokenizer.identifier() + "</identifier>")
         elif self.tokenizer.tokenType == JackTokenizer.INT_CONST:
-            self.outputFile.write("\t<integerConstant>" + self.tokenizer.intVal() + "</integerConstant>\n")
+            self.writeFormatted("<integerConstant>" + self.tokenizer.intVal() + "</integerConstant>")
         elif self.tokenizer.tokenType == JackTokenizer.STRING_CONST:
-            self.outputFile.write("\t<stringConstant>" + self.tokenizer.stringVal() + "</stringConstant>\n")
+            self.writeFormatted("<stringConstant>" + self.tokenizer.stringVal() + "</stringConstant>")
+
+    def writeFormatted(self, string):
+        self.outputFile.write("  " * self.indentLevel + string + "\n")
