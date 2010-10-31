@@ -282,7 +282,7 @@ class CompilationEngine:
 
     def compileExpression(self):
         from JackTokenizer import JackTokenizer
-        opList = ['+', '-', '*', '/', '&', '|', '<', '>', '=']
+        opList = ['+', '-', '*', '/', '&amp;', '|', '&lt;', '&gt;', '=']
         self.writeFormatted("<expression>")
         self.indentLevel += 1
         print("About to call compile term current token is " + self.tokenizer.currentToken)
