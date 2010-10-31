@@ -1,9 +1,6 @@
-#TODO - must finish the compileTerm() method.  This means handling subroutine calls.  
-#What I should probably do is implement compileSubroutineCall method (even though it's not 
-#explicitly mentioned by the book) and implement what the book says.  This has the added benefit
-#that I can replace my subroutine call in compileDo() because it appears to be broken.
 class CompilationEngine:
 
+    keywordConsts = ["null", "true", "false", "this"] #Should 'this' be included?  Can you assign 'this'?
     def __init__(self, tokenizer, outputFile):
         self.tokenizer = tokenizer
         self.outputFile = outputFile
@@ -122,7 +119,6 @@ class CompilationEngine:
         stmtStarts = ['do', 'while', 'let', 'if', 'return']
         while(self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType == JackTokenizer.KEYWORD 
               and self.tokenizer.keyWord() in stmtStarts):
-            print("The current token is " + self.tokenizer.currentToken)
             if self.tokenizer.keyWord() == "do":
                 self.compileDo()
             elif self.tokenizer.keyWord() == "while":
@@ -160,14 +156,23 @@ class CompilationEngine:
             raise Exception("Let keyword expected")
         self.printToken() #Should print "let"
         if self.tokenizer.hasMoreTokens():
-            self.tokenizer.advance() #Should advance to varName
-        numOpeningStatements = 2
-        i = 0
-        while self.tokenizer.hasMoreTokens() and i < numOpeningStatements:
-            self.printToken()
             self.tokenizer.advance()
-            i += 1
-            #TODO - This doesn't currently handle arrays. 
+            print("compileLet - varname " + self.tokenizer.currentToken)
+            self.printToken() #Should print varname
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+            print("compileLet - [ or = " + self.tokenizer.currentToken)
+            self.printToken() #Should print '[' or '='
+        if self.tokenizer.currentToken == "[":
+            self.tokenizer.advance()
+            self.compileExpression()
+            self.printToken() #Should print ']'
+            if self.tokenizer.hasMoreTokens():
+                self.tokenizer.advance()
+                self.printToken() #Should print '='
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+        print("compileLet - after equals " + self.tokenizer.currentToken)
         self.compileExpression()
         self.printToken() #print ";"
         if self.tokenizer.hasMoreTokens():
@@ -254,9 +259,11 @@ class CompilationEngine:
         from JackTokenizer import JackTokenizer
         opList = ['+', '-', '*', '/', '&', '|', '<', '>', '=']
         self.outputFile.write("<expression>\n")
+        print("About to call compile term current token is " + self.tokenizer.currentToken)
         self.compileTerm()
         while self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() in opList:
             self.printToken()
+            print("Current operator " + self.tokenizer.currentToken)
             if self.tokenizer.hasMoreTokens():
                 self.tokenizer.advance()
                 self.compileTerm()
@@ -264,20 +271,55 @@ class CompilationEngine:
 
     def compileTerm(self):
         from JackTokenizer import JackTokenizer
+        print("Opening token is " + self.tokenizer.currentToken)
         unaryOps = ['-', '~']
         self.outputFile.write("<term>\n")
         self.printToken()
         if self.tokenizer.tokenType == JackTokenizer.IDENTIFIER:
             self.tokenizer.advance()
             self.printToken()
+            print("second token in IDENTIFIER " + self.tokenizer.currentToken)
             if self.tokenizer.tokenType == JackTokenizer.SYMBOL:
+                if self.tokenizer.symbol() == ".":
+                    print("Doing the dot thing")
+                    if self.tokenizer.hasMoreTokens():
+                        self.tokenizer.advance()
+                        print("Token before doing subroutine call " + self.tokenizer.currentToken)
+                        self.compileSubroutineCall()
+                        print("Current token after compiling subroutine is " + self.tokenizer.currentToken)
+                elif self.tokenizer.symbol() == "(":
+                    if self.tokenizer.hasMoreTokens():
+                        self.tokenizer.advance()
+                        self.compileExpressionList()
+                        self.printToken() #Print ')'
+                        if self.tokenizer.hasMoreTokens():
+                            self.tokenizer.advance()
+                elif self.tokenizer.symbol() == "[":
+                    self.compileExpression()
+                    self.printToken() #Should print ']'
+                    if self.tokenizer.hasMoreTokens():
+                        self.tokenizer.advance()
+                else:
+                    print("We didn't match it and the token is " + self.tokenizer.currentToken)
         elif self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() == "(":
             self.tokenizer.advance()
+            print("second token in ()" + self.tokenizer.currentToken)
             self.compileExpression()
             self.printToken() #print ')'
+            if self.tokenizer.hasMoreTokens():
+                self.tokenizer.advance()
         elif self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() in unaryOps:
             self.tokenizer.advance()
+            print("second token in unary " + self.tokenizer.currentToken)
             self.compileTerm()
+        elif(self.tokenizer.currentToken in CompilationEngine.keywordConsts or 
+                self.tokenizer.tokenType == JackTokenizer.INT_CONST or 
+                self.tokenizer.tokenType == JackTokenizer.STRING_CONST):
+            if self.tokenizer.hasMoreTokens():
+               self.tokenizer.advance() 
+        else:
+            raise Exception("Invalid term provided")
+        print("The current token is " + self.tokenizer.currentToken)
         self.outputFile.write("</term>\n")
 
     def compileExpressionList(self):
@@ -294,6 +336,31 @@ class CompilationEngine:
                if self.tokenizer.hasMoreTokens():
                    self.tokenizer.advance()
         self.outputFile.write("</expressionList>\n")
+
+    def compileSubroutineCall(self):
+        from JackTokenizer import JackTokenizer
+        self.printToken() #Should print either the subroutine name or the class/object the
+        #subroutine is a member of
+        print("Subroutine name should be - " + self.tokenizer.currentToken)
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+            self.printToken() #Should print '.' or '(' 
+            print("After subroutine name - " + self.tokenizer.currentToken)
+        if self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() == ".":
+            if self.tokenizer.hasMoreTokens():
+                self.tokenizer.advance() 
+                self.printToken() #Should print subroutine name
+                print("Subroutine name - " + self.tokenizer.currentToken)
+            if self.tokenizer.hasMoreTokens():
+                self.tokenizer.advance()
+                self.printToken() #Should print opening '('
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+            print("Should be closing ) - " + self.tokenizer.currentToken)
+            self.compileExpressionList()
+            self.printToken() #Should print ')'
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
 
     def printToken(self):
         from JackTokenizer import JackTokenizer
