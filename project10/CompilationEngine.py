@@ -325,10 +325,12 @@ class CompilationEngine:
                             self.tokenizer.advance()
                 elif self.tokenizer.symbol() == "[":
                     self.printToken()
-                    self.compileExpression()
-                    self.printToken() #Should print ']'
                     if self.tokenizer.hasMoreTokens():
                         self.tokenizer.advance()
+                        self.compileExpression()
+                        self.printToken() #Should print ']'
+                        if self.tokenizer.hasMoreTokens():
+                            self.tokenizer.advance()
                 else:
                     print("We didn't match it and the token is " + self.tokenizer.currentToken)
         elif self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() == "(":
