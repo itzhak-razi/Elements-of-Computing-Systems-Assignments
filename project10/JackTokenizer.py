@@ -104,7 +104,16 @@ class JackTokenizer:
     def symbol(self):
         if self.tokenType != JackTokenizer.SYMBOL:
             raise TypeError("Symbol token not available")
-        return self.currentToken
+        if self.currentToken == "<":
+            return "&lt;"
+        elif self.currentToken == ">":
+            return "&gt;"
+        elif self.currentToken == "&":
+            return "&amp;"
+        elif self.currentToken == '"':
+            return "&quot;"
+        else:
+            return self.currentToken
 
     def identifier(self):
         if self.tokenType != JackTokenizer.IDENTIFIER:
