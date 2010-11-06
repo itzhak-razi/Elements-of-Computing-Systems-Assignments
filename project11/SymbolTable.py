@@ -11,7 +11,7 @@ class SymbolTable:
     def startSubroutine(self):
         self.subTable = dict()
    
-    def define(self, name, identifierType, identifierkind):
+    def define(self, name, identifierType, identifierKind):
         varIndex = self.varCount(identifierKind)
         if(kind == SymbolTable.STATIC || kind == SymbolTable.FIELD):
             self.classTable[name] = dict(kind=identifierKind, type=identifierKind, index=varIndex)
