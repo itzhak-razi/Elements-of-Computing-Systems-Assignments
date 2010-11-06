@@ -1,9 +1,11 @@
 class CompilationEngine:
 
-    keywordConsts = ["null", "true", "false", "this"] #Should 'this' be included?  Can you assign 'this'?
+    keywordConsts = ["null", "true", "false", "this"] 
     def __init__(self, tokenizer, outputFile):
+        from SymbolTable import SymbolTable
         self.tokenizer = tokenizer
         self.outputFile = outputFile
+        self.symbolTable = SymbolTable()
         print(outputFile)
     
     def compileClass(self):
@@ -35,25 +37,46 @@ class CompilationEngine:
         self.indentLevel -= 1
     
     def compileClassVarDec(self):
+        from JackTokenizer import JackTokenizer
         self.writeFormatted("<classVarDec>")
         self.indentLevel += 1
-        NUM_OPENING_STATEMENTS = 3
-        i = 0
-        while self.tokenizer.hasMoreTokens() and i < NUM_OPENING_STATEMENTS:
-            self.printToken()
+        self.printToken() #Should print static or field
+        if self.tokenizer.tokenType == JackTokenizer.KEYWORD:
+            if self.tokenizer.keyWord() == "static":
+                kind = SymbolTable.STATIC
+            elif self.tokenizer.keyWord() == "field":
+                kind = Symbol.FIELD
+            else
+                raise Exception("Invalid kind of class variable " + self.tokenizer.keyWord())
+        else:
+            raise Exception("Keyword expected")
+        
+        if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
-            i += 1
+            self.printToken() #Should print the variable type
+            identifierType = self.tokenizer.currentToken
+        
+        varNames = []
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+            self.printToken() #Should print variable name
+            varNames.append(self.tokenizer.currentToken)
     
         while self.tokenizer.symbol() != ";" and self.tokenizer.hasMoreTokens():
             if self.tokenizer.symbol() != ",":
                 raise Exception("Invalid variable list")
-            self.printToken()
+            self.printToken() #Should print ','
             self.tokenizer.advance()
-            self.printToken()
+            self.printToken() #Should print variable name
+            varNames.append(self.tokenizer.currentToken)
             if not self.tokenizer.hasMoreTokens():
-                raise Exception("Another variable expected in list")
+                raise Exception("More tokens expected")
             self.tokenizer.advance()
         self.printToken()
+    
+
+        for name in varNames:
+            self.symbolTable.define(name, identifierType, kind)
 
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
