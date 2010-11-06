@@ -138,13 +138,38 @@ class CompilationEngine:
 
     def compileVarDec(self):
         from JackTokenizer import JackTokenizer
+        from SymbolTable import SymbolTable
         self.writeFormatted("<varDec>")
         self.indentLevel += 1
+        
+        varNames = []
+        self.printToken() #Should print 'var'
+        if self.tokenizer.currentToken != "var":
+            raise Exception("'var' keyword expected")
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+            self.printToken() #Should print the type
+            identifierType = self.tokenizer.currentToken
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance() 
+            self.printToken() #Should print the var name
+            varNames.append(self.tokenizer.currentToken) 
+        
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+
         while(self.tokenizer.hasMoreTokens() and 
                 (self.tokenizer.tokenType != JackTokenizer.SYMBOL or self.tokenizer.symbol() != ";")):
-            self.printToken()
+            self.printToken() #Should print ','
             self.tokenizer.advance()
-        self.printToken()
+            self.printToken() #Should print the var name
+            varNames.append(self.tokenizer.currentToken)
+            self.tokenizer.advance()
+    
+        for name in varNames:
+            self.symbolTable.define(name, identifierType, SymbolTable.VAR)
+
+        self.printToken() #Should print ';'
         self.tokenizer.advance()
         self.indentLevel -= 1
         self.writeFormatted("</varDec>")
