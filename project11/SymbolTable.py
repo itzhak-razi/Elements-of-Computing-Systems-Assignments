@@ -12,10 +12,11 @@ class SymbolTable:
         self.subTable = dict()
    
     def define(self, name, identifierType, identifierkind):
+        varIndex = self.varCount(identifierKind)
         if(kind == SymbolTable.STATIC || kind == SymbolTable.FIELD):
-            self.classTable[name] = dict(kind=identifierKind, type=identifierKind)
+            self.classTable[name] = dict(kind=identifierKind, type=identifierKind, index=varIndex)
         else:
-            self.subTable[name] = dict(kind=identifierKind, type=identifierKind)
+            self.subTable[name] = dict(kind=identifierKind, type=identifierKind, index=varIndex)
             
     def varCount(self, kind):
         total = 0
