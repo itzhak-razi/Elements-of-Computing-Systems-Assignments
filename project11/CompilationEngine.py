@@ -120,19 +120,36 @@ class CompilationEngine:
 
     def compileParameterList(self):
         from JackTokenizer import JackTokenizer
+        from SymbolTable import SymbolTable
         self.writeFormatted("<parameterList>")
         self.indentLevel += 1
+
+        if self.tokenizer.currentToken != ")":
+            self.printToken() #Should print the type
+            argType = self.tokenizer.currentToken
+            self.tokenizer.advance()
+            self.printToken() #Should print the name
+            argName = self.tokenizer.currentToken
+            self.symbolTable.define(argName, argType, SymbolTable.ARG)
+            self.tokenizer.advance()
+
+
         while self.tokenizer.tokenType != JackTokenizer.SYMBOL or self.tokenizer.symbol() != ")":
-            boolVal = self.tokenizer.tokenType != JackTokenizer.SYMBOL or self.tokenizer.symbol() != ")"
-            self.printToken() #Should print the type or a comma
-            if self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() == ",":
-                self.tokenizer.advance()
-                self.printToken() #should print the type
+            self.printToken() #Should print a comma
+            if self.tokenizer.currentToken != ",":
+                raise Exception("Comma expected")
             if self.tokenizer.hasMoreTokens():
                 self.tokenizer.advance()
-            self.printToken() #Should print the variable name
+                self.printToken() #Should print the argument type
+                argType = self.tokenizer.currentToken
             if self.tokenizer.hasMoreTokens():
-                self.tokenizer.advance() #should advance to a comma or a closing paren
+                self.tokenizer.advance()
+                self.printToken() #Should print the argument name
+                argName = self.tokenizer.currentToken
+                self.symbolTable.define(argName, argType, SymbolTable.ARG)
+            if self.tokenizer.hasMoreTokens():
+                self.tokenizer.advance()
+            
         self.indentLevel -= 1
         self.writeFormatted("</parameterList>")
 
