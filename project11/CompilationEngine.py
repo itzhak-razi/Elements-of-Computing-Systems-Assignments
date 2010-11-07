@@ -1,3 +1,4 @@
+#TODO - handle subroutine and clases.  Should write info about them when they're being defined or called
 class CompilationEngine:
 
     keywordConsts = ["null", "true", "false", "this"] 
@@ -38,6 +39,7 @@ class CompilationEngine:
     
     def compileClassVarDec(self):
         from JackTokenizer import JackTokenizer
+        from SymbolTable import SymbolTable 
         self.writeFormatted("<classVarDec>")
         self.indentLevel += 1
         self.printToken() #Should print static or field
@@ -45,8 +47,8 @@ class CompilationEngine:
             if self.tokenizer.keyWord() == "static":
                 kind = SymbolTable.STATIC
             elif self.tokenizer.keyWord() == "field":
-                kind = Symbol.FIELD
-            else
+                kind = SymbolTable.FIELD
+            else:
                 raise Exception("Invalid kind of class variable " + self.tokenizer.keyWord())
         else:
             raise Exception("Keyword expected")
@@ -61,7 +63,9 @@ class CompilationEngine:
             self.tokenizer.advance()
             self.printToken() #Should print variable name
             varNames.append(self.tokenizer.currentToken)
-    
+            if self.tokenizer.hasMoreTokens(): 
+                self.tokenizer.advance()
+
         while self.tokenizer.symbol() != ";" and self.tokenizer.hasMoreTokens():
             if self.tokenizer.symbol() != ",":
                 raise Exception("Invalid variable list")
@@ -77,6 +81,8 @@ class CompilationEngine:
 
         for name in varNames:
             self.symbolTable.define(name, identifierType, kind)
+            self.writeVarInfo(name, False)
+
 
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
@@ -131,6 +137,7 @@ class CompilationEngine:
             self.printToken() #Should print the name
             argName = self.tokenizer.currentToken
             self.symbolTable.define(argName, argType, SymbolTable.ARG)
+            self.writeVarInfo(argName, False)
             self.tokenizer.advance()
 
 
@@ -147,6 +154,7 @@ class CompilationEngine:
                 self.printToken() #Should print the argument name
                 argName = self.tokenizer.currentToken
                 self.symbolTable.define(argName, argType, SymbolTable.ARG)
+                self.writeVarInfo(argName, False)
             if self.tokenizer.hasMoreTokens():
                 self.tokenizer.advance()
             
@@ -185,6 +193,7 @@ class CompilationEngine:
     
         for name in varNames:
             self.symbolTable.define(name, identifierType, SymbolTable.VAR)
+            self.writeVarInfo(name, False)
 
         self.printToken() #Should print ';'
         self.tokenizer.advance()
@@ -240,8 +249,8 @@ class CompilationEngine:
         self.printToken() #Should print "let"
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
-            print("compileLet - varname " + self.tokenizer.currentToken)
             self.printToken() #Should print varname
+            self.writeVarInfo(self.tokenizer.identifier(), True)
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
             print("compileLet - [ or = " + self.tokenizer.currentToken)
@@ -369,6 +378,7 @@ class CompilationEngine:
         self.indentLevel += 1
         self.printToken()
         if self.tokenizer.tokenType == JackTokenizer.IDENTIFIER:
+            name = self.tokenizer.identifier()
             self.tokenizer.advance()
             print("second token in IDENTIFIER " + self.tokenizer.currentToken)
             if self.tokenizer.tokenType == JackTokenizer.SYMBOL:
@@ -389,6 +399,7 @@ class CompilationEngine:
                         if self.tokenizer.hasMoreTokens():
                             self.tokenizer.advance()
                 elif self.tokenizer.symbol() == "[":
+                    self.writeVarInfo(name, True)
                     self.printToken()
                     if self.tokenizer.hasMoreTokens():
                         self.tokenizer.advance()
@@ -397,7 +408,7 @@ class CompilationEngine:
                         if self.tokenizer.hasMoreTokens():
                             self.tokenizer.advance()
                 else:
-                    print("We didn't match it and the token is " + self.tokenizer.currentToken)
+                    self.writeVarInfo(name, True)
         elif self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() == "(":
             self.tokenizer.advance()
             print("second token in ()" + self.tokenizer.currentToken)
@@ -477,3 +488,16 @@ class CompilationEngine:
 
     def writeFormatted(self, string):
         self.outputFile.write("  " * self.indentLevel + string + "\n")
+    
+    def writeVarInfo(self, varName, inUse):
+        from SymbolTable import SymbolTable
+        self.writeFormatted("<VariableInfo>")
+        self.indentLevel += 1
+        self.writeFormatted("<type>" + self.symbolTable.typeOf(varName) + "</type>")
+        self.writeFormatted("<kind>" + self.symbolTable.stringKindOf(varName) + "</kind>")
+        self.writeFormatted("<index>" + str(self.symbolTable.indexOf(varName)) + "</index>")
+        self.writeFormatted("<inUse>" + str(inUse) + "</inUse>")
+        self.indentLevel -= 1
+        self.writeFormatted("</VariableInfo>")
+
+    
