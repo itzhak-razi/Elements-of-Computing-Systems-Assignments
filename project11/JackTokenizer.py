@@ -103,7 +103,7 @@ class JackTokenizer:
 
     def symbol(self):
         if self.tokenType != JackTokenizer.SYMBOL:
-            raise TypeError("Symbol token not available")
+            raise TypeError("Symbol token not available - token is " + self.currentToken)
         if self.currentToken == "<":
             return "&lt;"
         elif self.currentToken == ">":
@@ -117,15 +117,15 @@ class JackTokenizer:
 
     def identifier(self):
         if self.tokenType != JackTokenizer.IDENTIFIER:
-            raise TypeError("Identifier token not available")
+            raise TypeError("Identifier token not available - token is " + self.currentToken)
         return self.currentToken
 
     def intVal(self):
         if self.tokenType != JackTokenizer.INT_CONST:
-            raise TypeError("Integer token not available")
+            raise TypeError("Integer token not available - token is " + self.currentToken)
         return self.currentToken
 
     def stringVal(self):
         if self.tokenType != JackTokenizer.STRING_CONST:
-            raise TypeError("String token not available")
+            raise TypeError("String token not available - token is " + self.currentToken)
         return self.currentToken[1:len(self.currentToken) - 2] #strips the quotes 
