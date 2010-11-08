@@ -49,6 +49,9 @@ class SymbolTable:
             return self.classTable[name][field]
         else:
             raise Exception(name + " not found in either hash table")
+    
+    def isDefined(self, name):
+        return name in self.classTable or name in self.subTable
 
     def stringKindOf(self, name):
         constKind = self.kindOf(name)

@@ -20,11 +20,20 @@ class CompilationEngine:
             raise Exception("Keyword 'class' expected")
         self.writeFormatted("<class>")
         self.indentLevel += 1
-        i = 0
-        while self.tokenizer.hasMoreTokens() and i < NUM_OPENING_STATEMENTS: 
-            self.printToken()
+        self.printToken() #Should print 'class'
+        if self.tokenizer.hasMoreTokens()
             self.tokenizer.advance()
-            i += 1
+            self.printToken() #Should print class name
+            self.writeClassOrSubInfo("class", False)
+
+        if self.tokenizer.hasMoreTokens()
+            self.tokenizer.advance()
+            self.printToken() #Should print '{'
+        #i = 0
+        #while self.tokenizer.hasMoreTokens() and i < NUM_OPENING_STATEMENTS: 
+        #    self.printToken()
+        #    self.tokenizer.advance()
+        #    i += 1
         
         classVarCount = 0
         while self.tokenizer.hasMoreTokens() and self.tokenizer.keyWord() in classVarOpenings:
@@ -92,6 +101,7 @@ class CompilationEngine:
     def compileSubroutine(self):
         from JackTokenizer import JackTokenizer
         self.writeFormatted("<subroutineDec>")
+        self.symbolTable.startSubroutine()
         self.indentLevel += 1
         NUM_OPENING_STATEMENTS = 4
         i = 0
@@ -452,26 +462,36 @@ class CompilationEngine:
         from JackTokenizer import JackTokenizer
         self.printToken() #Should print either the subroutine name or the class/object the
         #subroutine is a member of
+        firstToken = self.tokenizer.currentToken
+        className = ""
+        subName = ""
         print("Subroutine name should be - " + self.tokenizer.currentToken)
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
             self.printToken() #Should print '.' or '(' 
             print("After subroutine name - " + self.tokenizer.currentToken)
         if self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() == ".":
+            className = firstToken
             if self.tokenizer.hasMoreTokens():
                 self.tokenizer.advance() 
                 self.printToken() #Should print subroutine name
+                subName = self.tokenizer.currentToken
                 print("Subroutine name - " + self.tokenizer.currentToken)
             if self.tokenizer.hasMoreTokens():
                 self.tokenizer.advance()
                 self.printToken() #Should print opening '('
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
-            print("Should be closing ) - " + self.tokenizer.currentToken)
             self.compileExpressionList()
             self.printToken() #Should print ')'
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
+
+        if classToken != "" and self.symbolTable.isDefined(classToken):
+            self.writeVarInfo(classToken, True) #Writing information about an object
+        elif classToken != "":
+            writeClassOrSubInfo("class", True) #Writing information about a class
+        self.writeClassOrSubInfo("subroutine", True)
 
     def printToken(self):
         from JackTokenizer import JackTokenizer
@@ -491,13 +511,19 @@ class CompilationEngine:
     
     def writeVarInfo(self, varName, inUse):
         from SymbolTable import SymbolTable
-        self.writeFormatted("<VariableInfo>")
+        self.writeFormatted("<IdentifierInfo>")
         self.indentLevel += 1
         self.writeFormatted("<type>" + self.symbolTable.typeOf(varName) + "</type>")
         self.writeFormatted("<kind>" + self.symbolTable.stringKindOf(varName) + "</kind>")
         self.writeFormatted("<index>" + str(self.symbolTable.indexOf(varName)) + "</index>")
         self.writeFormatted("<inUse>" + str(inUse) + "</inUse>")
         self.indentLevel -= 1
-        self.writeFormatted("</VariableInfo>")
+        self.writeFormatted("</IdentifierInfo>")
 
-    
+   def writeClassOrSubInfo(self, kind, inUse):
+       self.writeFormatted("<IdentifierInfo>")
+       self.indentLevel += 1
+       self.writeFormatted("<kind>" + kind + "</kind>")
+       self.writeFormatted("<inUse>" + str(inUse) + "</inUse>")
+       self.indentLevel -= 1
+       self.writeFormatted("</IdentifierInfo>")
