@@ -98,7 +98,7 @@ class JackTokenizer:
 
     def keyWord(self):
         if self.tokenType != JackTokenizer.KEYWORD:
-            raise TypeError("Keyword token not available")
+            raise TypeError("Keyword token not available - token is " + self.currentToken)
         return self.currentToken
 
     def symbol(self):
