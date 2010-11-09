@@ -29,11 +29,9 @@ class CompilationEngine:
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
             self.printToken() #Should print '{'
-        #i = 0
-        #while self.tokenizer.hasMoreTokens() and i < NUM_OPENING_STATEMENTS: 
-        #    self.printToken()
-        #    self.tokenizer.advance()
-        #    i += 1
+        
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
         
         classVarCount = 0
         while self.tokenizer.hasMoreTokens() and self.tokenizer.keyWord() in classVarOpenings:
@@ -470,19 +468,17 @@ class CompilationEngine:
         self.printToken() #Should print either the subroutine name or the class/object the
         #subroutine is a member of
         firstToken = self.tokenizer.currentToken
-        className = ""
-        subName = ""
+        isClassOrObj = False
         print("Subroutine name should be - " + self.tokenizer.currentToken)
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
             self.printToken() #Should print '.' or '(' 
             print("After subroutine name - " + self.tokenizer.currentToken)
         if self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() == ".":
-            className = firstToken
+            isClassOrObj = True
             if self.tokenizer.hasMoreTokens():
                 self.tokenizer.advance() 
                 self.printToken() #Should print subroutine name
-                subName = self.tokenizer.currentToken
                 print("Subroutine name - " + self.tokenizer.currentToken)
             if self.tokenizer.hasMoreTokens():
                 self.tokenizer.advance()
@@ -494,9 +490,9 @@ class CompilationEngine:
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
 
-        if classToken != "" and self.symbolTable.isDefined(classToken):
+        if isClassOrObj and self.symbolTable.isDefined(firstToken):
             self.writeVarInfo(classToken, True) #Writing information about an object
-        elif classToken != "":
+        elif isClassOrObj:
             writeClassOrSubInfo("class", True) #Writing information about a class
         self.writeClassOrSubInfo("subroutine", True)
 
