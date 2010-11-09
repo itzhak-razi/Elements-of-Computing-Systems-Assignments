@@ -21,12 +21,12 @@ class CompilationEngine:
         self.writeFormatted("<class>")
         self.indentLevel += 1
         self.printToken() #Should print 'class'
-        if self.tokenizer.hasMoreTokens()
+        if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
             self.printToken() #Should print class name
             self.writeClassOrSubInfo("class", False)
 
-        if self.tokenizer.hasMoreTokens()
+        if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
             self.printToken() #Should print '{'
         #i = 0
@@ -527,7 +527,7 @@ class CompilationEngine:
         self.indentLevel -= 1
         self.writeFormatted("</IdentifierInfo>")
 
-   def writeClassOrSubInfo(self, kind, inUse):
+    def writeClassOrSubInfo(self, kind, inUse):
        self.writeFormatted("<IdentifierInfo>")
        self.indentLevel += 1
        self.writeFormatted("<kind>" + kind + "</kind>")
