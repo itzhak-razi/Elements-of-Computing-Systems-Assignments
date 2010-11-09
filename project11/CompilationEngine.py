@@ -64,7 +64,11 @@ class CompilationEngine:
             self.tokenizer.advance()
             self.printToken() #Should print the variable type
             identifierType = self.tokenizer.currentToken
-        
+            isKeyword = self.tokenizer.tokenType == JackTokenizer.KEYWORD
+
+        if not isKeyword:
+            self.writeClassOrSubInfo("class", True)
+
         varNames = []
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
@@ -182,7 +186,9 @@ class CompilationEngine:
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
             self.printToken() #Should print the type
-            identifierType = self.tokenizer.currentToken
+            varType = self.tokenizer.currentToken
+            isKeyword = self.tokenizer.tokenType == JackTokenizer.KEYWORD
+
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance() 
             self.printToken() #Should print the var name
@@ -198,9 +204,13 @@ class CompilationEngine:
             self.printToken() #Should print the var name
             varNames.append(self.tokenizer.currentToken)
             self.tokenizer.advance()
-    
+        
+        #If the type is not a keyword (e.g. int) that means it's a class and we should print identifier info
+        if not isKeyword:
+            self.writeClassOrSubInfo("class", "True")
+
         for name in varNames:
-            self.symbolTable.define(name, identifierType, SymbolTable.VAR)
+            self.symbolTable.define(name, varType, SymbolTable.VAR)
             self.writeVarInfo(name, False)
 
         self.printToken() #Should print ';'
