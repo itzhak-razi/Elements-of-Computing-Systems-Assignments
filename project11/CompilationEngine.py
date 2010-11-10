@@ -2,11 +2,13 @@
 class CompilationEngine:
 
     keywordConsts = ["null", "true", "false", "this"] 
-    def __init__(self, tokenizer, outputFile):
+    def __init__(self, tokenizer, outputFile, vmFile):
         from SymbolTable import SymbolTable
+        from VMWriter import VMWriter
         self.tokenizer = tokenizer
         self.outputFile = outputFile
         self.symbolTable = SymbolTable()
+        self.vmWriter = VMWriter(vmFile)
         print(outputFile)
     
     def compileClass(self):

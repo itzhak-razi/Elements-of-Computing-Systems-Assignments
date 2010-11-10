@@ -27,14 +27,16 @@ class JackAnalyzer:
         from JackTokenizer import JackTokenizer
         from CompilationEngine import CompilationEngine
         import os
-        outputFileName = os.path.join(inputDirName, "output",
-            os.path.splitext(os.path.basename(inputFile.name))[0] + ".xml")
-        
-        if(not os.path.exists(os.path.dirname(outputFileName))):
-            os.makedirs(os.path.dirname(outputFileName))
-        outputFile = open(outputFileName, 'w')
+        basename = os.path.splitext(os.path.basename(inputFile.name))[0]
+        xmlFileName = os.path.join(inputDirName, "output", basename + ".xml")
+        vmFileName = os.path.join(inputDirName, "output", basename + ".vm") 
+
+        if(not os.path.exists(os.path.dirname(xmlFileName))):
+            os.makedirs(os.path.dirname(xmlFileName))
+        xmlFile = open(xmlFileName, 'w')
+        vmFile = open(vmFileName, 'w')
         tokenizer = JackTokenizer(inputFile)
-        engine = CompilationEngine(tokenizer, outputFile)
+        engine = CompilationEngine(tokenizer, xmlFile, vmFile)
         tokenizer.advance()
         engine.compileClass()
     
