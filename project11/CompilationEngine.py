@@ -26,6 +26,7 @@ class CompilationEngine:
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
             self.printToken() #Should print class name
+            self.className = self.tokenizer.identifier()
             self.writeClassOrSubInfo("class", False)
 
         if self.tokenizer.hasMoreTokens():
@@ -108,15 +109,29 @@ class CompilationEngine:
         self.symbolTable.startSubroutine()
         self.indentLevel += 1
         NUM_OPENING_STATEMENTS = 4
-        i = 0
-        while self.tokenizer.hasMoreTokens() and i < NUM_OPENING_STATEMENTS:
-            self.printToken()
-            self.tokenizer.advance()
-            i += 1
+        
+        self.printToken() #Should print 'constructor', 'function', or 'method'
+        if self.tokenizer().hasMoreTokens():
+            self.tokenizer.advance() 
+            self.printToken() #Should print the type or 'void'
+
+        if self.tokenizer().hasMoreTokens():
+            self.tokenizer.advance() 
+            self.printToken() #Should print the subroutine name
+            self.subName = self.tokenizer.identifier()
+
+        if self.tokenizer().hasMoreTokens():
+            self.tokenizer.advance() 
+            self.printToken() #Should print opening '(' before parameter list
+
+        if self.tokenizer().hasMoreTokens():
+            self.tokenizer.advance() 
         self.compileParameterList()
         self.printToken() #Should print closing ")" after parameter list
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
+
+        self.numLocalVariables = 0
         self.compileSubroutineBody()
         self.indentLevel -= 1
         self.writeFormatted("</subroutineDec>")
@@ -128,9 +143,12 @@ class CompilationEngine:
         self.printToken() #Should print "{"
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
+        
         while(self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType == JackTokenizer.KEYWORD
                 and self.tokenizer.keyWord() == "var"):
             self.compileVarDec()
+        
+        self.vmWriter.writeFunction(self.className + "." + self.subName, self.numLocalVariables) 
         self.compileStatements()
         self.printToken() #Should print closing "}"
         if self.tokenizer.hasMoreTokens():
@@ -178,6 +196,7 @@ class CompilationEngine:
     def compileVarDec(self):
         from JackTokenizer import JackTokenizer
         from SymbolTable import SymbolTable
+        self.numLocalVariables += 1
         self.writeFormatted("<varDec>")
         self.indentLevel += 1
         
@@ -206,6 +225,7 @@ class CompilationEngine:
             self.printToken() #Should print the var name
             varNames.append(self.tokenizer.currentToken)
             self.tokenizer.advance()
+            self.numLocalVariables += 1
         
         #If the type is not a keyword (e.g. int) that means it's a class and we should print identifier info
         if not isKeyword:
@@ -447,8 +467,9 @@ class CompilationEngine:
             self.tokenizer.advance()
             print("second token in unary " + self.tokenizer.currentToken)
             self.compileTerm()
+        elif self.tokenizer.tokenType == JackTokenizer.INT_CONST:
+            self.vmWriter.writePush("constant", self.tokenizer.intVal())
         elif(self.tokenizer.currentToken in CompilationEngine.keywordConsts or 
-                self.tokenizer.tokenType == JackTokenizer.INT_CONST or 
                 self.tokenizer.tokenType == JackTokenizer.STRING_CONST):
             if self.tokenizer.hasMoreTokens():
                self.tokenizer.advance() 
