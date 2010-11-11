@@ -267,14 +267,12 @@ class CompilationEngine:
         if self.tokenizer.keyWord() != "do":
             raise Exception("'do' keyword expected")
         self.printToken()
-        while (self.tokenizer.hasMoreTokens() and 
-              (self.tokenizer.tokenType != JackTokenizer.SYMBOL or self.tokenizer.symbol() != "(")):
-            self.tokenizer.advance() 
-            self.printToken()
-        self.tokenizer.advance()
-        self.compileExpressionList()
-        self.printToken() #print ')'
-        self.tokenizer.advance()
+
+        if self.tokenizer.hasMoreTokens():
+            self.tokenizer.advance()
+            self.compileSubroutineCall()
+            self.vmWriter.writePop("constant", 0) #This pops and ignores the returned value 
+
         self.printToken() #Print ';'
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
@@ -349,7 +347,11 @@ class CompilationEngine:
             self.tokenizer.advance()
         if not(self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() == ";"):
             self.compileExpression()
+        else:
+            #When the function's return type is void it should always return 0
+            self.vmWriter.push("constant", 0)
         self.printToken() #print ";"
+        self.vmWriter.writeReturn()
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
         self.indentLevel -= 1
@@ -396,17 +398,33 @@ class CompilationEngine:
 
     def compileExpression(self):
         from JackTokenizer import JackTokenizer
-        opList = ['+', '-', '*', '/', '&amp;', '|', '&lt;', '&gt;', '=']
+
+        #There are 2 symbol arrays which each correspond to a different array with 
+        #the commands/functions to call for the given operator in the same index
+        functionSymbols = [ '*', '/']
+        functionNames = ["Math.multiply", "Math.divide"]
+        builtInCommands = ["add", "sub", "and", "or", "lt", "gt", "eq"]
+        builtInSymbols = ['+', '-', '&amp;', '|', '&lt;', '&gt;', '=']
         self.writeFormatted("<expression>")
         self.indentLevel += 1
         print("About to call compile term current token is " + self.tokenizer.currentToken)
         self.compileTerm()
-        while self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() in opList:
+        while(self.tokenizer.tokenType == JackTokenizer.SYMBOL and 
+                (self.tokenizer.symbol() in builtInOpList or self.tokenizer.symbol() in functionOpList)):
             self.printToken()
+            operator = self.tokenizer.symbol() 
             print("Current operator " + self.tokenizer.currentToken)
             if self.tokenizer.hasMoreTokens():
                 self.tokenizer.advance()
                 self.compileTerm()
+
+            if operator in builtInOpList:
+                self.vmWriter.writeArithmetic(builtInCommands[builtInSymbols.index(operator)])
+            else:
+                #Both multiply and divide take two arguments
+                self.vmWriter.writeCall(functionNames[functionSymbols.index(operator)], 2)
+
+            
         self.indentLevel -= 1
         self.writeFormatted("</expression>")
 
@@ -441,7 +459,7 @@ class CompilationEngine:
                     self.writeClassOrSubInfo("subroutine", True)
                     if self.tokenizer.hasMoreTokens():
                         self.tokenizer.advance()
-                        self.compileExpressionList()
+                        self.compileExpression()
                         self.printToken() #Print ')'
                         if self.tokenizer.hasMoreTokens():
                             self.tokenizer.advance()
@@ -483,12 +501,16 @@ class CompilationEngine:
         from JackTokenizer import JackTokenizer
         self.writeFormatted("<expressionList>")
         self.indentLevel += 1
+        self.numExpressions = 0 #The number of expressions in this list
+
         #I sort of feel guilty for doing this since this relies on knowing that
         #the expression list is surrounded by parenthesis and according to the spec
         #it should not know that (it would require modifying this message if I wanted to use an expression list anywhere else).
-        #However, also according to the spec I should create a <subroutineCall> XML element
+        #However, also according to the spec I should create a <subroutineCall> XML element or I shouldn't depending
+        #on which part of the spec you trust.
         while not(self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() == ")"):
            self.compileExpression() 
+           self.numExpressions += 1
            if self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() == ",":
                self.printToken() #print ','
                if self.tokenizer.hasMoreTokens():
@@ -501,18 +523,17 @@ class CompilationEngine:
         self.printToken() #Should print either the subroutine name or the class/object the
         #subroutine is a member of
         firstToken = self.tokenizer.currentToken
+        secondToken = ""
         isClassOrObj = False
-        print("Subroutine name should be - " + self.tokenizer.currentToken)
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
             self.printToken() #Should print '.' or '(' 
-            print("After subroutine name - " + self.tokenizer.currentToken)
         if self.tokenizer.tokenType == JackTokenizer.SYMBOL and self.tokenizer.symbol() == ".":
             isClassOrObj = True
             if self.tokenizer.hasMoreTokens():
                 self.tokenizer.advance() 
                 self.printToken() #Should print subroutine name
-                print("Subroutine name - " + self.tokenizer.currentToken)
+                secondToken = self.tokenizer.currentToken
             if self.tokenizer.hasMoreTokens():
                 self.tokenizer.advance()
                 self.printToken() #Should print opening '('
@@ -523,10 +544,17 @@ class CompilationEngine:
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
 
+        
+        callName = firstToken 
+        if secondToken != "":
+            callName += "." + secondToken
+
+        self.vmWriter.writeCall(callName, self.numExpressions) 
+
         if isClassOrObj and self.symbolTable.isDefined(firstToken):
             self.writeVarInfo(classToken, True) #Writing information about an object
         elif isClassOrObj:
-            writeClassOrSubInfo("class", True) #Writing information about a class
+            self.writeClassOrSubInfo("class", True) #Writing information about a class
         self.writeClassOrSubInfo("subroutine", True)
 
     def printToken(self):
