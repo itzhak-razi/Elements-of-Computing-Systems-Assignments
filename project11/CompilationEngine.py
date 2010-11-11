@@ -111,20 +111,20 @@ class CompilationEngine:
         NUM_OPENING_STATEMENTS = 4
         
         self.printToken() #Should print 'constructor', 'function', or 'method'
-        if self.tokenizer().hasMoreTokens():
+        if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance() 
             self.printToken() #Should print the type or 'void'
 
-        if self.tokenizer().hasMoreTokens():
+        if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance() 
             self.printToken() #Should print the subroutine name
             self.subName = self.tokenizer.identifier()
 
-        if self.tokenizer().hasMoreTokens():
+        if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance() 
             self.printToken() #Should print opening '(' before parameter list
 
-        if self.tokenizer().hasMoreTokens():
+        if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance() 
         self.compileParameterList()
         self.printToken() #Should print closing ")" after parameter list
@@ -349,7 +349,7 @@ class CompilationEngine:
             self.compileExpression()
         else:
             #When the function's return type is void it should always return 0
-            self.vmWriter.push("constant", 0)
+            self.vmWriter.writePush("constant", 0)
         self.printToken() #print ";"
         self.vmWriter.writeReturn()
         if self.tokenizer.hasMoreTokens():
@@ -410,7 +410,7 @@ class CompilationEngine:
         print("About to call compile term current token is " + self.tokenizer.currentToken)
         self.compileTerm()
         while(self.tokenizer.tokenType == JackTokenizer.SYMBOL and 
-                (self.tokenizer.symbol() in builtInOpList or self.tokenizer.symbol() in functionOpList)):
+                (self.tokenizer.symbol() in builtInSymbols or self.tokenizer.symbol() in functionSymbols)):
             self.printToken()
             operator = self.tokenizer.symbol() 
             print("Current operator " + self.tokenizer.currentToken)
@@ -418,7 +418,7 @@ class CompilationEngine:
                 self.tokenizer.advance()
                 self.compileTerm()
 
-            if operator in builtInOpList:
+            if operator in builtInSymbols:
                 self.vmWriter.writeArithmetic(builtInCommands[builtInSymbols.index(operator)])
             else:
                 #Both multiply and divide take two arguments
@@ -487,6 +487,8 @@ class CompilationEngine:
             self.compileTerm()
         elif self.tokenizer.tokenType == JackTokenizer.INT_CONST:
             self.vmWriter.writePush("constant", self.tokenizer.intVal())
+            if self.tokenizer.hasMoreTokens():
+                self.tokenizer.advance()
         elif(self.tokenizer.currentToken in CompilationEngine.keywordConsts or 
                 self.tokenizer.tokenType == JackTokenizer.STRING_CONST):
             if self.tokenizer.hasMoreTokens():

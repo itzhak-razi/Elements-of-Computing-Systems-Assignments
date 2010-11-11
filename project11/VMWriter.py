@@ -16,7 +16,7 @@ class VMWriter:
         self.outputFile.write("label " + label + "\n")
 
     def writeGoto(self, label):
-        self.outputFile.write("goto " + label "\n")
+        self.outputFile.write("goto " + label + "\n")
 
     def writeIf(self, label):
         self.outputFile.write("if-goto " + label + "\n")
