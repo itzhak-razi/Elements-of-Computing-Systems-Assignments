@@ -25,7 +25,7 @@ class VMWriter:
         self.outputFile.write("call " + name + " " + str(nArgs) + "\n")
 
     def writeFunction(self, name, nLocals):
-        self.outputFile.write("function " + name + " " + str(nLocals) + "\n")
+        self.outputFile.write("\nfunction " + name + " " + str(nLocals) + "\n")
 
     def writeReturn(self):
         self.outputFile.write("return\n")

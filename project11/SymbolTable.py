@@ -1,9 +1,9 @@
 class SymbolTable:
     NONE = 0
-    STATIC = 1
+    STATIC = "static"
     FIELD = 2
-    ARG = 3
-    VAR = 4
+    ARG = "argument"
+    VAR = "local"
 
     def __init__(self):
         self.classTable = dict()
