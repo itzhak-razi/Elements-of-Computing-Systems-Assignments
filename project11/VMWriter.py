@@ -1,4 +1,6 @@
 class VMWriter:
+    THIS_POINTER = 0
+    THAT_POINTER = 1
 
     def __init__(self, outputFile):
         self.outputFile = outputFile

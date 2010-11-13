@@ -299,8 +299,8 @@ class CompilationEngine:
             self.writeVarInfo(self.tokenizer.identifier(), True)
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
-            print("compileLet - [ or = " + self.tokenizer.currentToken)
             self.printToken() #Should print '[' or '='
+            print("compileLet - [ or = " + self.tokenizer.currentToken)
         if self.tokenizer.currentToken == "[":
             self.tokenizer.advance()
             self.compileExpression()
@@ -310,9 +310,7 @@ class CompilationEngine:
                 varKind = self.symbolTable.kindOf(varName)
                 if varKind == SymbolTable.STATIC:
                     raise Exception("Currently not implemented")
-                elif varKind == SymbolTable.FIELD:
-                    raise Exception("Currently not implemented")
-                elif varKind == SymbolTable.ARGUMENT or varKind == SymbolTable.FIELD:
+                else:
                     self.vmWriter.writePush(varKind, self.symbolTable.indexOf(varName))
 
                 self.vmWriter.writeArithmetic("add")
@@ -327,7 +325,7 @@ class CompilationEngine:
         else:
             #If it goes down this path this is just a regular variable not an array
             varKind = self.symbolTable.kindOf(varName)
-            if varKind == SymbolTable.STATIC or varKind == SymbolTable.FIELD:
+            if varKind == SymbolTable.STATIC:
                 raise Exception("Curently not implemented")
             else:
                 segment = varKind
@@ -484,6 +482,7 @@ class CompilationEngine:
 
     def compileTerm(self):
         from JackTokenizer import JackTokenizer
+        from VMWriter import VMWriter
         print("Opening token is " + self.tokenizer.currentToken)
         unaryOps = ['-', '~']
         unaryCommands = ["neg", "not"]
@@ -508,6 +507,11 @@ class CompilationEngine:
 
                     self.tokenizer.advance() 
                     self.printToken() #Should print '('
+
+                    #If the subroutine is a method call we must first push the object before 
+                    #pushing the rest of the arguments
+                    if self.symbolTable.isDefined(name):
+                        self.vmWriter.writePush(self.symbolTable.kindOf(name), self.symbolTable.indexOf(name))
 
                     self.numExpressions = 0
                     self.tokenizer.advance()
@@ -564,7 +568,7 @@ class CompilationEngine:
                 self.vmWriter.writePush("constant", 1)
                 self.vmWriter.writeArithmetic("neg") #Value of true is -1
             elif self.tokenizer.keyWord() == "this":
-                raise Exception("Not currently implemented")
+                self.vmWriter.writePush("pointer", VMWriter.THIS_POINTER) 
             else:
                 raise Exception("Invalid keyword constant " + self.tokenizer.keyWord())
 
@@ -621,6 +625,12 @@ class CompilationEngine:
                 self.printToken() #Should print opening '('
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
+
+            #If the subroutine is a method call we must first push the object before 
+            #pushing the rest of the arguments
+            if secondToken != "" and self.symbolTable.isDefined(firstToken):
+                self.vmWriter.writePush(self.symbolTable.kindOf(firstToken), self.symbolTable.indexOf(firstToken))
+
             self.compileExpressionList()
             self.printToken() #Should print ')'
         if self.tokenizer.hasMoreTokens():
@@ -634,7 +644,7 @@ class CompilationEngine:
         self.vmWriter.writeCall(callName, self.numExpressions) 
 
         if isClassOrObj and self.symbolTable.isDefined(firstToken):
-            self.writeVarInfo(classToken, True) #Writing information about an object
+            self.writeVarInfo(firstToken, True) #Writing information about an object
         elif isClassOrObj:
             self.writeClassOrSubInfo("class", True) #Writing information about a class
         self.writeClassOrSubInfo("subroutine", True)
