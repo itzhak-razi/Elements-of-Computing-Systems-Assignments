@@ -1,4 +1,3 @@
-#TODO - handle subroutine and clases.  Should write info about them when they're being defined or called
 class CompilationEngine:
 
     keywordConsts = ["null", "true", "false", "this"] 
@@ -37,9 +36,9 @@ class CompilationEngine:
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
         
-        classVarCount = 0
+        self.classVarCount = 0
         while self.tokenizer.hasMoreTokens() and self.tokenizer.keyWord() in classVarOpenings:
-            classVarCount += 1
+            self.classVarCount += 1
             self.compileClassVarDec()
         while(self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType == JackTokenizer.KEYWORD 
                 and self.tokenizer.keyWord() in subOpenings):
@@ -112,6 +111,12 @@ class CompilationEngine:
         NUM_OPENING_STATEMENTS = 4
         
         self.printToken() #Should print 'constructor', 'function', or 'method'
+        
+        if self.tokenizer.keyWord() == "constructor":
+            self.vmWriter.writePush("constant", self.classVarCount)
+            self.vmWriter.writeCall("Memory.alloc", 1) #allocate space for this object
+            self.vmWriter.writePop("pointer", 0) #assign object to 'this'
+
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance() 
             self.printToken() #Should print the type or 'void'

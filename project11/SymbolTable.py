@@ -1,7 +1,7 @@
 class SymbolTable:
     NONE = 0
     STATIC = "static"
-    FIELD = 2
+    FIELD = "this"
     ARG = "argument"
     VAR = "local"
 
