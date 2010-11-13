@@ -272,7 +272,7 @@ class CompilationEngine:
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
             self.compileSubroutineCall()
-            self.vmWriter.writePop("constant", 0) #This pops and ignores the returned value 
+            self.vmWriter.writePop("temp", 0) #This pops and ignores the returned value 
 
         self.printToken() #Print ';'
         if self.tokenizer.hasMoreTokens():
