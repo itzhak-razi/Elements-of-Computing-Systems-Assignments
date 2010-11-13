@@ -87,6 +87,7 @@ class CompilationEngine:
             self.tokenizer.advance()
             self.printToken() #Should print variable name
             varNames.append(self.tokenizer.currentToken)
+            self.classVarCount += 1
             if not self.tokenizer.hasMoreTokens():
                 raise Exception("More tokens expected")
             self.tokenizer.advance()
@@ -111,11 +112,10 @@ class CompilationEngine:
         NUM_OPENING_STATEMENTS = 4
         
         self.printToken() #Should print 'constructor', 'function', or 'method'
-        
         if self.tokenizer.keyWord() == "constructor":
-            self.vmWriter.writePush("constant", self.classVarCount)
-            self.vmWriter.writeCall("Memory.alloc", 1) #allocate space for this object
-            self.vmWriter.writePop("pointer", 0) #assign object to 'this'
+            self.isConstructor = True
+        else:
+            self.isConstructor = False
 
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance() 
@@ -155,6 +155,11 @@ class CompilationEngine:
             self.compileVarDec()
         
         self.vmWriter.writeFunction(self.className + "." + self.subName, self.numLocalVariables) 
+        if self.isConstructor:
+            self.vmWriter.writePush("constant", self.classVarCount)
+            self.vmWriter.writeCall("Memory.alloc", 1) #allocate space for this object
+            self.vmWriter.writePop("pointer", 0) #assign object to 'this'
+
         self.compileStatements()
         self.printToken() #Should print closing "}"
         if self.tokenizer.hasMoreTokens():
@@ -517,8 +522,12 @@ class CompilationEngine:
                     self.tokenizer.advance()
                     self.compileExpressionList()
                     self.printToken() #Should print ')'
+                    
+                    if self.symbolTable.isDefined(name):
+                        self.vmWriter.writeCall(self.symbolTable.typeOf(name) + "." + subName, self.numExpressions)
+                    else:
+                        self.vmWriter.writeCall(name + "." + subName, self.numExpressions)
 
-                    self.vmWriter.writeCall(name + "." + subName, self.numExpressions)
                     self.tokenizer.advance()
                 elif self.tokenizer.symbol() == "(":
                     self.printToken()
@@ -636,10 +645,14 @@ class CompilationEngine:
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
 
-        
-        callName = firstToken 
+         
         if secondToken != "":
-            callName += "." + secondToken
+            if self.symbolTable.isDefined(firstToken):
+                callName = self.symbolTable.typeOf(firstToken) + "." + secondToken
+            else:
+                callName = firstToken + "." + secondToken
+        else:
+            callName = firstToken
 
         self.vmWriter.writeCall(callName, self.numExpressions) 
 
