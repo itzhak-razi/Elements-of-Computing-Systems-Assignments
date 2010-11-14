@@ -532,7 +532,8 @@ class CompilationEngine:
                     self.printToken() #Should print ')'
                     
                     if self.symbolTable.isDefined(name):
-                        self.vmWriter.writeCall(self.symbolTable.typeOf(name) + "." + subName, self.numExpressions)
+                        #Must add 1 to the number of arguments since we pushed the object that the method is operating on
+                        self.vmWriter.writeCall(self.symbolTable.typeOf(name) + "." + subName, self.numExpressions + 1)
                     else:
                         self.vmWriter.writeCall(name + "." + subName, self.numExpressions)
 
@@ -542,8 +543,11 @@ class CompilationEngine:
                     self.writeClassOrSubInfo("subroutine", True)
                     if self.tokenizer.hasMoreTokens():
                         self.tokenizer.advance()
-                        self.numExpressions = 0
+
+                        self.vmWriter.writePush("pointer", VMWriter.THIS_POINTER)
                         self.compileExpressionList()
+                        self.numExpressions += 1
+
                         self.printToken() #Print ')'
                         self.vmWriter.writeCall(self.className +  "." + name, self.numExpressions)
                         if self.tokenizer.hasMoreTokens():
@@ -623,6 +627,7 @@ class CompilationEngine:
 
     def compileSubroutineCall(self):
         from JackTokenizer import JackTokenizer
+        from VMWriter import VMWriter
         self.printToken() #Should print either the subroutine name or the class/object the
         #subroutine is a member of
         firstToken = self.tokenizer.currentToken
@@ -647,8 +652,13 @@ class CompilationEngine:
             #pushing the rest of the arguments
             if secondToken != "" and self.symbolTable.isDefined(firstToken):
                 self.vmWriter.writePush(self.symbolTable.kindOf(firstToken), self.symbolTable.indexOf(firstToken))
+            
+            if secondToken == "":
+                self.vmWriter.writePush("pointer", VMWriter.THIS_POINTER)
 
             self.compileExpressionList()
+            
+
             self.printToken() #Should print ')'
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
@@ -657,9 +667,11 @@ class CompilationEngine:
         if secondToken != "":
             if self.symbolTable.isDefined(firstToken):
                 callName = self.symbolTable.typeOf(firstToken) + "." + secondToken
+                self.numExpressions += 1
             else:
                 callName = firstToken + "." + secondToken
         else:
+            self.numExpressions += 1
             callName = self.className + "." + firstToken
 
         self.vmWriter.writeCall(callName, self.numExpressions) 
