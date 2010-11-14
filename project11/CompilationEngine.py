@@ -596,6 +596,11 @@ class CompilationEngine:
             if self.tokenizer.hasMoreTokens():
                 self.tokenizer.advance()
         elif self.tokenizer.tokenType == JackTokenizer.STRING_CONST:
+            self.vmWriter.writePush("constant", len(self.tokenizer.stringVal()))
+            self.vmWriter.writeCall("String.new", 1)
+            for char in self.tokenizer.stringVal():
+                 
+
             if self.tokenizer.hasMoreTokens():
                self.tokenizer.advance() 
         else:
