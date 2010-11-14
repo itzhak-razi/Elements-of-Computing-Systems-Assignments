@@ -300,8 +300,10 @@ class CompilationEngine:
 
     def compileLet(self):
         from SymbolTable import SymbolTable
+        from VMWriter import VMWriter
         self.writeFormatted("<letStatement>")
         self.indentLevel += 1
+        isArray = False
         if self.tokenizer.keyWord() != "let":
             raise Exception("Let keyword expected")
         self.printToken() #Should print "let"
@@ -315,10 +317,10 @@ class CompilationEngine:
             self.printToken() #Should print '[' or '='
             print("compileLet - [ or = " + self.tokenizer.currentToken)
         if self.tokenizer.currentToken == "[":
+            isArray = True
             self.tokenizer.advance()
-            self.compileExpression()
-            self.printToken() #Should print ']'
-            
+
+             
             if self.symbolTable.isDefined(varName):
                 varKind = self.symbolTable.kindOf(varName)
                 if varKind == SymbolTable.STATIC:
@@ -326,10 +328,12 @@ class CompilationEngine:
                 else:
                     self.vmWriter.writePush(varKind, self.symbolTable.indexOf(varName))
 
+                self.compileExpression()
+                self.printToken() #Should print ']'
                 self.vmWriter.writeArithmetic("add")
-                self.vmWriter.writePop("pointer", 1) #Pointer 1 is the segment that points to 'that'
                 segment = "that"
                 index = 0
+
             else:
                 raise Exception("Symbol " + varName + " is not defined")
             if self.tokenizer.hasMoreTokens():
@@ -346,8 +350,13 @@ class CompilationEngine:
 
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
+
+
         print("compileLet - after equals " + self.tokenizer.currentToken)
         self.compileExpression()
+        if isArray:
+            self.vmWriter.writePop("temp", 0)
+            self.vmWriter.writePush("pointer", VMWriter.THAT_POINTER)
 
         self.vmWriter.writePop(segment, index)
         self.printToken() #print ";"
@@ -553,13 +562,18 @@ class CompilationEngine:
                         if self.tokenizer.hasMoreTokens():
                             self.tokenizer.advance()
                 elif self.tokenizer.symbol() == "[":
-                    #TODO - IMPLEMENT THIS
                     self.writeVarInfo(name, True)
                     self.printToken()
+
+                    self.vmWriter.writePush(self.symbolTable.kindOf(name), self.symbolTable.indexOf(name))
                     if self.tokenizer.hasMoreTokens():
                         self.tokenizer.advance()
                         self.compileExpression()
                         self.printToken() #Should print ']'
+
+                        self.vmWriter.writeArithmetic("add")
+                        self.vmWriter.writePop("pointer", VMWriter.THAT_POINTER)
+                        self.vmWriter.writePush("that", 0)
                         if self.tokenizer.hasMoreTokens():
                             self.tokenizer.advance()
                 else:
@@ -599,7 +613,8 @@ class CompilationEngine:
             self.vmWriter.writePush("constant", len(self.tokenizer.stringVal()))
             self.vmWriter.writeCall("String.new", 1)
             for char in self.tokenizer.stringVal():
-                 
+                self.vmWriter.writePush("constant", ord(char))
+                self.vmWriter.writeCall("String.appendChar", 2)
 
             if self.tokenizer.hasMoreTokens():
                self.tokenizer.advance() 
