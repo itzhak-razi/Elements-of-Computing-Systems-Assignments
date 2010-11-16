@@ -353,8 +353,9 @@ class CompilationEngine:
         self.compileExpression()
         if isArray:
             self.vmWriter.writePop("temp", 0)
-            self.vmWriter.writePush("pointer", VMWriter.THAT_POINTER)
+            self.vmWriter.writePop("pointer", VMWriter.THAT_POINTER)
             self.vmWriter.writePush("temp", 0)
+            self.vmWriter.writePop("that", 0)
 
         self.vmWriter.writePop(segment, index)
         self.printToken() #print ";"
