@@ -128,4 +128,4 @@ class JackTokenizer:
     def stringVal(self):
         if self.tokenType != JackTokenizer.STRING_CONST:
             raise TypeError("String token not available - token is " + self.currentToken)
-        return self.currentToken[1:len(self.currentToken) - 2] #strips the quotes 
+        return self.currentToken[1:len(self.currentToken) - 1] #strips the quotes 
