@@ -121,6 +121,7 @@ class CompilationEngine:
             self.isConstructor = True
         elif self.tokenizer.keyWord() == "method":
             self.isMethod = True
+            self.symbolTable.define("this", self.className, SymbolTable.ARG)
 
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance() 
