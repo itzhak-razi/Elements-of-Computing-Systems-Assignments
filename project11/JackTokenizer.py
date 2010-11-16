@@ -21,6 +21,9 @@ class JackTokenizer:
         self.commentsRemoved = ""
         self.currentToken = ""
         self.tokenIndex = 0
+        self.nonIdentRegex = "\s"
+        for symbol in JackTokenizer.SYMBOLS:
+            self.nonIdentRegex += "|\\" + symbol
 
         #Loop to strip comments.  Note that if a file has a beginning comment indicator (// or /*) 
         #as the last characters this won't remove them.
@@ -60,7 +63,7 @@ class JackTokenizer:
         #match keywords
         if self.commentsRemoved[self.tokenIndex].isalpha():
             for currentKeyword in JackTokenizer.KEYWORDS:
-                if re.match(currentKeyword, self.commentsRemoved[self.tokenIndex:]):
+                if re.match(currentKeyword + "[" + self.nonIdentRegex + "]", self.commentsRemoved[self.tokenIndex:]):
                     self.currentToken = currentKeyword
                     self.tokenIndex += len(currentKeyword)
                     self.tokenType = JackTokenizer.KEYWORD
