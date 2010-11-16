@@ -36,9 +36,10 @@ class CompilationEngine:
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
         
-        self.classVarCount = 0
+        self.fieldCount = 0
         while self.tokenizer.hasMoreTokens() and self.tokenizer.keyWord() in classVarOpenings:
-            self.classVarCount += 1
+            if self.tokenizer.keyWord() == "field":
+                self.fieldCount += 1
             self.compileClassVarDec()
         while(self.tokenizer.hasMoreTokens() and self.tokenizer.tokenType == JackTokenizer.KEYWORD 
                 and self.tokenizer.keyWord() in subOpenings):
@@ -87,7 +88,8 @@ class CompilationEngine:
             self.tokenizer.advance()
             self.printToken() #Should print variable name
             varNames.append(self.tokenizer.currentToken)
-            self.classVarCount += 1
+            if kind == SymbolTable.FIELD:
+                self.fieldCount += 1
             if not self.tokenizer.hasMoreTokens():
                 raise Exception("More tokens expected")
             self.tokenizer.advance()
@@ -161,7 +163,7 @@ class CompilationEngine:
         
         self.vmWriter.writeFunction(self.className + "." + self.subName, self.numLocalVariables) 
         if self.isConstructor:
-            self.vmWriter.writePush("constant", self.classVarCount)
+            self.vmWriter.writePush("constant", self.fieldCount)
             self.vmWriter.writeCall("Memory.alloc", 1) #allocate space for this object
             self.vmWriter.writePop("pointer", 0) #assign object to 'this'
         elif self.isMethod:
@@ -323,10 +325,7 @@ class CompilationEngine:
              
             if self.symbolTable.isDefined(varName):
                 varKind = self.symbolTable.kindOf(varName)
-                if varKind == SymbolTable.STATIC:
-                    raise Exception("Currently not implemented")
-                else:
-                    self.vmWriter.writePush(varKind, self.symbolTable.indexOf(varName))
+                self.vmWriter.writePush(varKind, self.symbolTable.indexOf(varName))
 
                 self.compileExpression()
                 self.printToken() #Should print ']'
@@ -342,11 +341,8 @@ class CompilationEngine:
         else:
             #If it goes down this path this is just a regular variable not an array
             varKind = self.symbolTable.kindOf(varName)
-            if varKind == SymbolTable.STATIC:
-                raise Exception("Curently not implemented")
-            else:
-                segment = varKind
-                index = self.symbolTable.indexOf(varName)
+            segment = varKind
+            index = self.symbolTable.indexOf(varName)
 
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
@@ -429,10 +425,10 @@ class CompilationEngine:
         from JackTokenizer import JackTokenizer
         self.writeFormatted("<ifStatement>")
         self.indentLevel += 1
+        trueLabel = "IF-TRUE" + str(self.labelNum)
+        falseLabel = "IF-FALSE" + str(self.labelNum)
+        endLabel = "END-IF" + str(self.labelNum)
         self.labelNum += 1
-        firstLabel = "I" + str(self.labelNum)
-        self.labelNum += 1
-        secondLabel = "I" + str(self.labelNum)
         if self.tokenizer.keyWord() != "if":
             raise Exception("'if' keyword was expected")
         self.printToken() #print 'if'
@@ -443,20 +439,21 @@ class CompilationEngine:
             self.tokenizer.advance()
             self.compileExpression()
             self.printToken() #print ')'
-            self.vmWriter.writeArithmetic("not") 
-            self.vmWriter.writeIf(firstLabel)
+            self.vmWriter.writeIf(trueLabel)
+            self.vmWriter.writeGoto(falseLabel)
+            self.vmWriter.writeLabel(trueLabel)
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
             self.printToken() #print '{'
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
             self.compileStatements()
-            self.vmWriter.writeGoto(secondLabel)
-            self.vmWriter.writeLabel(firstLabel)
             self.printToken() #print '}'
         if self.tokenizer.hasMoreTokens():
             self.tokenizer.advance()
         if self.tokenizer.tokenType == JackTokenizer.KEYWORD and self.tokenizer.keyWord() == "else":
+            self.vmWriter.writeGoto(endLabel)
+            self.vmWriter.writeLabel(falseLabel)
             self.printToken() #print 'else'
             if self.tokenizer.hasMoreTokens():
                 self.tokenizer.advance()
@@ -467,7 +464,11 @@ class CompilationEngine:
             self.printToken() #print '}'
             if self.tokenizer.hasMoreTokens():
                 self.tokenizer.advance()
-        self.vmWriter.writeLabel(secondLabel)
+            self.vmWriter.writeLabel(endLabel)
+        else:
+            #In this case the if statement doesn't have an else so we 
+            #don't need the end label
+            self.vmWriter.writeLabel(falseLabel)
         self.indentLevel -= 1
         self.writeFormatted("</ifStatement>")
 
@@ -519,7 +520,7 @@ class CompilationEngine:
             if self.tokenizer.tokenType == JackTokenizer.SYMBOL:
                 if self.tokenizer.symbol() == ".":
                     if self.symbolTable.isDefined(name):
-                        self.writeVarInfo(name, inUse)
+                        self.writeVarInfo(name, True)
                     else:
                         self.writeClassOrSubInfo("class", True)
 
