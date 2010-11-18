@@ -6,11 +6,17 @@
 /**
  * The String type.
  */
-class String {
+class String 
+{
+    var int maximumLength;
+    var int actualLength;
 
     /** Constructs a new empty String with a maximum length of
      *  maxLength. */
-    constructor String new(int maxLength) {
+    constructor String new(int maxLength) 
+    {
+        actualLength = 0;
+        maximumLength = maxLength;
     }
 
     /** De-allocates the string and frees its space. */
@@ -49,14 +55,20 @@ class String {
     }
 
     /** Returns the new line character. */
-    function char newLine() {
+    function char newLine() 
+    {
+        return 128;
     }
 
     /** Returns the backspace character. */
-    function char backSpace() {
+    function char backSpace() 
+    {
+        return 129;
     }
 
     /** Returns the double quote (") character. */
-    function char doubleQuote() {
+    function char doubleQuote() 
+    {
+        return 34;
     }
 }
