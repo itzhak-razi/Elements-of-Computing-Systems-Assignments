@@ -13,7 +13,9 @@ class Sys {
     }
 
     /** Halts the execution. */
-    function void halt() {
+    function void halt() 
+    {
+        while(true){}
     }
 
     /** Waits approximately duration milliseconds before it returns. */
@@ -22,6 +24,8 @@ class Sys {
 
     /** prints the given error code in the form "ERR<errorCode>",
      *  and halts. */
-    function void error(int errorCode) {
+    function void error(int errorCode) 
+    {
+        Output.printString("ERR" + String.errorCode);
     }
 }
