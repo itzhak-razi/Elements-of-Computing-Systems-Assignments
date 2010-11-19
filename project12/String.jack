@@ -22,6 +22,7 @@ class String
         let actualLength = 0;
         let maximumLength = maxLength;
         let string = Array.new(maximumLength);
+        return this;
     }
 
     /** De-allocates the string and frees its space. */
@@ -29,7 +30,8 @@ class String
     {
         let actualLength = 0;
         let maximumLength = 0;
-        string.deAlloc();
+        do string.deAlloc();
+        return;
     }
 
     /** Returns the current length of this String. */
@@ -48,6 +50,7 @@ class String
     method void setCharAt(int j, char c) 
     {
         let string[j] = c;
+        return;
     }
 
     /** Appends the character c to the end of this String.
@@ -56,12 +59,14 @@ class String
     {
         let string[actualLength] = c;
         let actualLength = actualLength + 1;
+        return this;
     }
 
     /** Erases the last character from this String. */
     method void eraseLastChar() 
     {
         let actualLength = actualLength - 1;
+        return;
     }
 
     /** Returns the integer value of this String until the first non
@@ -69,7 +74,8 @@ class String
     method int intValue() 
     {
         var int i;
-        var int retVal = 0;
+        var int retVal;
+        let retVal = 0;
         let i = 0;
         while(i < actualLength)
         {
@@ -82,6 +88,17 @@ class String
      *  number. */
     method void setInt(int number) 
     {
+        var char lastChar;
+        var int restOfNum;
+        if(number = 0)
+        {
+            return;
+        }
+        let restOfNum = number / 10;
+        let lastChar = number - (restOfNum * 10);
+        setInt(restOfNum);
+        appendChar(lastChar);
+        return;
     }
 
     /** Returns the new line character. */
