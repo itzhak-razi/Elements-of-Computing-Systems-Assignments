@@ -79,7 +79,7 @@ class String
         let i = 0;
         while(i < actualLength)
         {
-            retVal = (string[i] - zeroAsciiVal) + (retVal * 10);
+            let retVal = (string[i] - zeroAsciiVal) + (retVal * 10);
         }
         return retVal;
     }
@@ -88,7 +88,7 @@ class String
      *  number. */
     method void setInt(int number) 
     {
-        var char lastChar;
+        var int lastChar;
         var int restOfNum;
         if(number = 0)
         {
@@ -96,8 +96,8 @@ class String
         }
         let restOfNum = number / 10;
         let lastChar = number - (restOfNum * 10);
-        setInt(restOfNum);
-        appendChar(lastChar);
+        do setInt(restOfNum);
+        do appendChar(lastChar + 48);
         return;
     }
 
