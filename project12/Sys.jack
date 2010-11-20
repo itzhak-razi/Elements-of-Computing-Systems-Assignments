@@ -9,7 +9,14 @@
 class Sys {
 
     /** Makes all required initializations. */
-    function void init() {
+    function void init() 
+    {
+        do Memory.init();
+        do Math.init();
+        do Output.init();
+        do Screen.init();
+        do Keyboard.init();
+        do Main.main();
     }
 
     /** Halts the execution. */
@@ -26,6 +33,9 @@ class Sys {
      *  and halts. */
     function void error(int errorCode) 
     {
-        Output.printString("ERR" + String.errorCode);
+        Output.printString("ERR");
+        String codeString = String.new(2);
+        codeString.setInt(errorCode);
+        Output.printString(codeString);
     }
 }
