@@ -17,6 +17,7 @@ class Array {
     /** De-allocates the array and frees its space. */
     method void dispose() 
     {
-        Memory.deAlloc(this);
+        do Memory.deAlloc(this);
+        return;
     }
 }

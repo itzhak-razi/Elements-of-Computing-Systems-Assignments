@@ -12,9 +12,10 @@ class Main {
         var String s;
         var String i;
         
+        //do Output.printString("What's that, I've started this ");
         let s = String.new(0); // A zero-capacity string should be supported
         do s.dispose();
-
+        
         let s = String.new(6); // capacity 6, make sure length 5 will be printed
         let s = s.appendChar(97);
         let s = s.appendChar(98);

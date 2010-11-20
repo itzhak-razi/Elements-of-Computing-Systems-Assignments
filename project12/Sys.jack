@@ -26,7 +26,8 @@ class Sys {
     }
 
     /** Waits approximately duration milliseconds before it returns. */
-    function void wait(int duration) {
+    function void wait(int duration) 
+    {
     }
 
     /** prints the given error code in the form "ERR<errorCode>",
@@ -37,5 +38,6 @@ class Sys {
         String codeString = String.new(2);
         codeString.setInt(errorCode);
         Output.printString(codeString);
+        do Sys.halt();
     }
 }
