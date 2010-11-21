@@ -84,8 +84,8 @@ class Memory
     {
         var Array node;
         var Array deAllocated;
-        let deAllocated = object[-1];
-        let deAllocated[1] = null;
+        let deAllocated = object - 1;
+        let deAllocated[NEXT_INDEX] = null;
         let node = freeList;
         while(~(node[NEXT_INDEX] = null))
         {
