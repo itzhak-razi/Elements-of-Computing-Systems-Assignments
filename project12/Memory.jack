@@ -11,16 +11,20 @@ class Memory
     
     static int LENGTH_INDEX;
     static int NEXT_INDEX;
-    static Array list;
+    static Array freeList;
 
     /** Initializes memory parameters. */
     function void init() 
     {
+        var Array next;
         let LENGTH_INDEX = 0;
         let NEXT_INDEX = 1;
-        let list = 2048;
-        let list[LENGTH_INDEX] = 16384;
-        let list[NEXT_INDEX] = null;
+        let freeList = 2048;
+        let freeList[LENGTH_INDEX] = 2;
+        let freeList[NEXT_INDEX] = 2050;
+        let next = freeList[NEXT_INDEX];
+        let next[LENGTH_INDEX] = 16382;
+        let next[NEXT_INDEX] = null;
         return;
     }
 
@@ -47,9 +51,11 @@ class Memory
     function int alloc(int size) 
     {
         var Array block;
+        var Array prev;
+        var Array next;
 
-        let block = list;
-        while(block[LENGTH_INDEX] < size)
+        let block = freeList;
+        while(~(block[LENGTH_INDEX] > size))
         {
             if(block[NEXT_INDEX] = null)
             {
@@ -58,8 +64,16 @@ class Memory
             }
             else
             {
+                let prev = block;
                 let block = block[NEXT_INDEX];
             }
+        }
+        if(~(block[LENGTH_INDEX] = size + 1))
+        {
+            let next = block + size + 1;
+            let next[LENGTH_INDEX] = block[LENGTH_INDEX] - (size + 1);
+            let next[NEXT_INDEX] = block[NEXT_INDEX];
+            let prev[NEXT_INDEX] = next;
         }
         let block[LENGTH_INDEX] = size + 1;
         return block + 1;
@@ -72,7 +86,7 @@ class Memory
         var Array deAllocated;
         let deAllocated = object[-1];
         let deAllocated[1] = null;
-        let node = list;
+        let node = freeList;
         while(~(node[NEXT_INDEX] = null))
         {
             let node = node[NEXT_INDEX];
