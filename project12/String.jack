@@ -75,11 +75,20 @@ class String
     {
         var int i;
         var int retVal;
+        var boolean isNeg;
+        
+        let isNeg = false;
         let retVal = 0;
         let i = 0;
+        if(string[i] = '-')
+        {
+            let isNeg = true;
+            let i = i + 1;
+        }
         while(i < actualLength)
         {
             let retVal = (string[i] - zeroAsciiVal) + (retVal * 10);
+            let i = i + 1;
         }
         return retVal;
     }
