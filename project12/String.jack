@@ -21,6 +21,10 @@ class String
         let zeroAsciiVal = 48;
         let actualLength = 0;
         let maximumLength = maxLength;
+        if(maximumLength < 1)
+        {
+            let maximumLength = 1;
+        }
         let string = Array.new(maximumLength);
         return this;
     }
@@ -30,7 +34,7 @@ class String
     {
         let actualLength = 0;
         let maximumLength = 0;
-        do string.deAlloc();
+        do string.dispose();
         return;
     }
 
@@ -80,7 +84,7 @@ class String
         let isNeg = false;
         let retVal = 0;
         let i = 0;
-        if(string[i] = '-')
+        if(string[i] = 45)
         {
             let isNeg = true;
             let i = i + 1;
@@ -97,7 +101,9 @@ class String
      *  number. */
     method void setInt(int number) 
     {
-        var int lastChar;
+        do Output.printString("Not yet implemented");
+        return;
+        /**var int lastChar;
         var int restOfNum;
         if(number = 0)
         {
@@ -107,7 +113,7 @@ class String
         let lastChar = number - (restOfNum * 10);
         do setInt(restOfNum);
         do appendChar(lastChar + 48);
-        return;
+        return;*/
     }
 
     /** Returns the new line character. */
