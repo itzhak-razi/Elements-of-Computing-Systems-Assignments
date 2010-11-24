@@ -6,12 +6,22 @@
 /**
  * A library for handling user input from the keyboard.
  */
-class Keyboard {
+class Keyboard 
+{
+
     static int KEYBOARD;
+    static int cursorCol;
+    static int cursorRow;
+    static int NUM_COLS;
+
     /** Initializes the keyboard. */
     function void init() 
     {
+        let NUM_COLS = 80;
         let KEYBOARD = 24576;
+        let cursorCol = 0;
+        let cursorCol = 0;
+        return;
     } 
 
     /**
@@ -50,14 +60,58 @@ class Keyboard {
      * waits until a key is pressed and then released, then echoes
      * the key to the screen, and returns the value of the pressed key.
      */
-    function char readChar() {
+    function char readChar() 
+    {
+        var char curKey;
+        var char oldKey;
+        do Output.moveCursor(cursorRow, cursorCol);
+
+        //Since local variables are auto-initialized to 0 this will run at least once
+        while(curKey = 0)
+        {
+            let curKey = Keyboard.keyPressed();
+        }
+        let oldKey = curKey;
+        while(curKey = oldKey)
+        {
+            let curKey = Keyboard.keyPressed();
+        }
+        do Output.printChar(oldKey);
+        do Keyboard.autoMoveCursor(1);
+        return oldKey;
     }
 
     /**								
      * prints the message on the screen and then reads the next line
      * (until a newline character) from the keyboard and returns its value.
      */
-    function String readLine(String message) {
+    function String readLine(String message) 
+    {
+        var char c;
+        var String line;
+        let line = String.new(NUM_COLS);
+        do Output.printString(message);
+
+        while(true)
+        {
+            let c = Keyboard.readChar();
+            if(c = String.newLine()) 
+            {
+                let cursorRow = cursorRow + 1;
+                do Output.printString(c);
+                return line;
+            }
+            if(c = String.backSpace())
+            {
+                do Keyboard.autoMoveCursor(-1);
+            }
+            else
+            {
+                do line.appendChar(c);
+            }
+
+        }
+        return line; //Should never be executed but the compiler needs a return statement.
     }   
 
     /**								
@@ -65,6 +119,25 @@ class Keyboard {
      * (until a newline character) from the keyboard and returns its
      * integer value (until the first non numeric character).
      */
-    function int readInt(String message) {
+    function int readInt(String message) 
+    {
+        do Output.printString("Not yet implemented");
+        return 0;
+    }
+
+    function void autoMoveCursor(int dir)
+    {
+        let cursorCol = cursorCol + dir;
+        if(cursorCol > NUM_COLS)
+        {
+            let cursorCol = 0;
+            let cursorRow = cursorRow + 1;
+        }
+        if(cursorCol < 0)
+        {
+            let cursorCol = 0;
+        }
+        do Output.moveCursor(cursorRow, cursorCol);
+        return;
     }
 }
