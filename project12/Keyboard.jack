@@ -10,8 +10,6 @@ class Keyboard
 {
 
     static int KEYBOARD;
-    static int cursorCol;
-    static int cursorRow;
     static int NUM_COLS;
 
     /** Initializes the keyboard. */
@@ -19,8 +17,6 @@ class Keyboard
     {
         let NUM_COLS = 80;
         let KEYBOARD = 24576;
-        let cursorCol = 0;
-        let cursorRow = 0;
         return;
     } 
 
@@ -105,13 +101,12 @@ class Keyboard
             if(c = String.newLine()) 
             {
                 do Output.println();
-                let cursorRow = cursorRow + 1;
-                let cursorCol = 0;
                 return line;
             }
             if(c = String.backSpace())
             {
                 do Output.backSpace();
+                do line.eraseLastChar();
             }
             else
             {
