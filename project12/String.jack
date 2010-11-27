@@ -61,6 +61,10 @@ class String
      *  Returns this string as the return value. */
     method String appendChar(char c) 
     {
+        if(actualLength = maximumLength)
+        {
+            do Sys.error(17);
+        }
         let string[actualLength] = c;
         let actualLength = actualLength + 1;
         return this;
@@ -70,6 +74,10 @@ class String
     method void eraseLastChar() 
     {
         let actualLength = actualLength - 1;
+        if(actualLength < 0)
+        {
+            do Sys.error(18);
+        }
         return;
     }
 
