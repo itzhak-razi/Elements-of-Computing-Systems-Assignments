@@ -20,7 +20,7 @@ class Keyboard
         let NUM_COLS = 80;
         let KEYBOARD = 24576;
         let cursorCol = 0;
-        let cursorCol = 0;
+        let cursorRow = 0;
         return;
     } 
 
@@ -64,7 +64,7 @@ class Keyboard
     {
         var char curKey;
         var char oldKey;
-        do Output.moveCursor(cursorRow, cursorCol);
+        do Output.printChar(0);
 
         //Since local variables are auto-initialized to 0 this will run at least once
         while(curKey = 0)
@@ -76,8 +76,15 @@ class Keyboard
         {
             let curKey = Keyboard.keyPressed();
         }
-        do Output.printChar(oldKey);
-        do Keyboard.autoMoveCursor(1);
+        if(oldKey < String.newLine())
+        {
+            do Output.backSpace();
+            do Output.printChar(oldKey);
+        }
+        else
+        {
+            do Output.backSpace();
+        }
         return oldKey;
     }
 
@@ -97,13 +104,14 @@ class Keyboard
             let c = Keyboard.readChar();
             if(c = String.newLine()) 
             {
+                do Output.println();
                 let cursorRow = cursorRow + 1;
-                do Output.printString(c);
+                let cursorCol = 0;
                 return line;
             }
             if(c = String.backSpace())
             {
-                do Keyboard.autoMoveCursor(-1);
+                do Output.backSpace();
             }
             else
             {
@@ -121,23 +129,9 @@ class Keyboard
      */
     function int readInt(String message) 
     {
-        do Output.printString("Not yet implemented");
-        return 0;
+        var String lineRead;
+        let lineRead = Keyboard.readLine(message);
+        return lineRead.intValue();
     }
 
-    function void autoMoveCursor(int dir)
-    {
-        let cursorCol = cursorCol + dir;
-        if(cursorCol > NUM_COLS)
-        {
-            let cursorCol = 0;
-            let cursorRow = cursorRow + 1;
-        }
-        if(cursorCol < 0)
-        {
-            let cursorCol = 0;
-        }
-        do Output.moveCursor(cursorRow, cursorCol);
-        return;
-    }
 }
