@@ -6,35 +6,93 @@
 /**
  * Graphic screen library.
  */
-class Screen {
+class Screen 
+{
+    static boolean isBlack;
+    static int SCREEN_ADDR;
+    static int KEYBOARD_ADDR;
+    static Array twoToThe;
 
     /** Initializes the Screen. */
-    function void init() {
+    function void init() 
+    {
+        var int i;
+        var int currentVal;
+
+        let isBlack = true;
+        let SCREEN_ADDR = 16384;
+        let KEYBOARD_ADDR = 24576;
+
+        let currentVal = 1;
+        let i = 0;
+        while(i < 16)
+        {
+            let twoToThe[i] = currentVal;
+            let currentVal = currentVal + currentVal;
+            let i = i + 1;
+        }
+        return;
     }
 
     /** Erases the whole screen. */
-    function void clearScreen() {
+    function void clearScreen() 
+    {
+        var int i;
+
+        let i = SCREEN_ADDR;
+        while(i < KEYBOARD_ADDR)
+        {
+            do Memory.poke(i, 0);
+            let i = i + 1;
+        }
+        return;
     }
 
     /** Sets the color to be used in further draw commands
      *  where white = false, black = true. */
-    function void setColor(boolean b) {
+    function void setColor(boolean b) 
+    {
+        let isBlack = b;
+        return;
     }
 
     /** Draws the (x, y) pixel. */
-    function void drawPixel(int x, int y) {
+    function void drawPixel(int x, int y) 
+    {
+        var int addr;
+        var int pixelValue;
+        var int bitIndex;
+        var int xDiv16;
+
+        let xDiv16 = x / 16;
+        let bitIndex = x - (xDiv16 * 16);
+        let addr = (y * 32) + xDiv16;
+        let pixelValue = Memory.peek(addr);
+        if(isBlack)
+        {
+            let pixelValue = twoToThe[bitIndex] | pixelValue;
+        }
+        else
+        {
+            let pixelValue = (~twoToThe[bitIndex]) & pixelValue;
+        }
+        do Memory.poke(addr, pixelValue);
+        return;
     }
 
     /** Draws a line from pixel (x1, y1) to (x2, y2). */
     function void drawLine(int x1, int y1, int x2, int y2) {
+        return;
     }
 
     /** Draws a filled rectangle where the top left corner
      *  is (x1, y1) and the bottom right corner is (x2, y2). */
     function void drawRectangle(int x1, int y1, int x2, int y2) {
+        return;
     }
 
     /** Draws a filled circle of radius r around (cx, cy). */
     function void drawCircle(int cx, int cy, int r) {
+        return;
     }
 }
