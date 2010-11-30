@@ -18,7 +18,8 @@ class Screen
     {
         var int i;
         var int currentVal;
-
+        
+        let twoToThe = Array.new(16);
         let isBlack = true;
         let SCREEN_ADDR = 16384;
         let KEYBOARD_ADDR = 24576;
@@ -64,9 +65,14 @@ class Screen
         var int bitIndex;
         var int xDiv16;
 
+        if((x < 0) | (x > 511) | (y < 0) | (y > 255))
+        {
+            do Sys.error(7);
+        }
+
         let xDiv16 = x / 16;
         let bitIndex = x - (xDiv16 * 16);
-        let addr = (y * 32) + xDiv16;
+        let addr = SCREEN_ADDR + ((y * 32) + xDiv16);
         let pixelValue = Memory.peek(addr);
         if(isBlack)
         {
@@ -81,18 +87,79 @@ class Screen
     }
 
     /** Draws a line from pixel (x1, y1) to (x2, y2). */
-    function void drawLine(int x1, int y1, int x2, int y2) {
+    function void drawLine(int x1, int y1, int x2, int y2) 
+    {
+        var int adyMinusbdx; //autoinitialized to 0
+        var int a, b, dx, dy;
+        var int xBase, xEnd;
+        var int yBase, yEnd;
+        let dx = x2 - x1;
+        let dy = y2 - y1;
+
+        if(dx = 0)
+        {
+            let yBase = y2;
+            let yEnd = y1;
+            if(y1 < y2)
+            {
+                let yBase = y1;
+                let yEnd = y2;
+            }
+            while(~(yBase > yEnd)) //yBase <= yEnd
+            {
+                do Screen.drawPixel(x1, yBase);
+                let yBase = yBase + 1;
+            }
+        }
+        if(dy = 0)
+        {
+            let xBase = x2;
+            let xEnd = x1;
+            if(x1 < x2)
+            {
+                let xBase = x1;
+                let xEnd = x2;
+            }
+            while(~(xBase > xEnd)) //xBase <= xEnd
+            {
+                do Screen.drawPixel(xBase, y1);
+                let xBase = xBase + 1;
+            }
+        }
+        while((~(a > dx)) & (~(b > dy)))
+        {
+            do Screen.drawPixel(x1 + a, y1 + b);
+            if(adyMinusbdx < 0)
+            {
+                let a = a + 1;
+                let adyMinusbdx = adyMinusbdx + dy;
+            }
+            else
+            {
+                let b = b + 1;
+                let adyMinusbdx = adyMinusbdx - dx;
+            }
+        }
         return;
     }
 
     /** Draws a filled rectangle where the top left corner
      *  is (x1, y1) and the bottom right corner is (x2, y2). */
-    function void drawRectangle(int x1, int y1, int x2, int y2) {
+    function void drawRectangle(int x1, int y1, int x2, int y2) 
+    {
+        var int yCounter;
+        let yCounter = y1;
+        while(yCounter < y2)
+        {
+            do Screen.drawLine(x1, yCounter, x2, yCounter);
+            let yCounter = yCounter + 1;
+        }
         return;
     }
 
     /** Draws a filled circle of radius r around (cx, cy). */
-    function void drawCircle(int cx, int cy, int r) {
+    function void drawCircle(int cx, int cy, int r) 
+    {
         return;
     }
 }
